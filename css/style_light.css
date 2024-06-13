@@ -1,0 +1,966 @@
+body {
+  background-color: beige;
+  color: darkolivegreen;
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+}
+
+
+div {
+  text-align: center;
+}
+
+.upperLinks {
+  text-align: left;
+  font-size: larger;
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#mainPageLink {
+  margin-left: 40px;
+  font-weight: 500;
+  font-size: x-large;
+  color: darkolivegreen;
+  text-decoration: none;
+}
+
+
+.logIn_signUp {
+  text-align: right;
+}
+
+#logIn {
+  margin-right: 60px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: darkolivegreen;
+  text-decoration: none;
+}
+
+#signUp {
+  margin-right: 60px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: darkolivegreen;
+  text-decoration: none;
+}
+
+
+#mainDove {
+  height: 500px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#mainSlogan {
+  font-size: 30px;
+}
+
+.mainContent {
+  margin: 0 auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 70%;
+  border: 2px solid darkolivegreen;
+  background-color: #fffff3;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-self: auto;
+  align-items: center; /* 가로 방향으로 중앙 정렬 */
+}
+
+
+/*       라디오버튼      */
+
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.buttonContainer label {
+  display: flex;
+  cursor: pointer;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  font-size: 20;
+  margin-bottom: 0.375em;
+}
+
+.buttonContainer input {
+  position: absolute;
+  left: -9999px;
+}
+
+.buttonContainer input:checked + span {
+  background-color: #7b934b; /* Equivalent of mix(#fff, $primary-color, 84%) */
+  color: beige;
+}
+
+.buttonContainer input:checked + span:before {
+  box-shadow: inset 0 0 0 0.4375em darkolivegreen; /* $primary-color */
+}
+
+.buttonContainer span {
+  display: flex;
+  align-items: center;
+  padding: 0.375em 0.75em 0.375em 0.375em;
+  border-radius: 99em;
+  transition: 0.25s ease;
+  padding: 7px 10px;
+}
+
+.buttonContainer span:hover {
+  background-color: #7b934b; /* Equivalent of mix(#fff, $primary-color, 84%) */
+  color: beige;
+}
+
+.buttonContainer span:before {
+  display: flex;
+  flex-shrink: 0;
+  content: "";
+  background-color: #fff;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  margin-right: 0.375em;
+  transition: 0.25s ease;
+  box-shadow: inset 0 0 0 0.125em darkolivegreen; /* $primary-color */
+}
+
+.buttonContainer {
+  width: 90%;
+  display: flex;
+  margin-top: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row; 
+  color: darkolivegreen;
+  gap: 30px;
+}
+
+.buttonContainer button {
+  flex: none;
+}
+
+
+/*체크박스*/
+
+.donationType {
+  width: 90%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 20px;
+  height: 18px;
+  align-items: center;
+}
+
+.donationType .checkbox {
+  margin: 0 0 12px 0;
+  display: table;
+  cursor: pointer;
+  align-items: center;
+}
+
+.donationType .checkbox.inline {
+  margin: 0 12px 0 0;
+  display: inline-block;
+}
+
+.donationType .checkbox input {
+  display: none;
+}
+
+.donationType .checkbox input + span {
+  color: #6C7486;
+  height: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  display: block;
+  padding-left: 18px;
+}
+
+.donationType .checkbox input + span:not(:empty) {
+  padding-left: 30px;
+}
+
+.donationType .checkbox input + span:before,
+.donationType .checkbox input + span:after {
+  content: '';
+  display: block;
+  left: 0;
+  top: 0;
+  position: absolute;
+  transition: transform .3s ease, opacity .2s ease, background .2s ease;
+}
+
+.donationType .checkbox input + span:before {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #CDD9ED;
+  background: #fff;
+  border-radius: 4px;
+  transition: background .3s ease, border-color .3s ease;
+}
+
+.donationType .checkbox input:checked + span:before {
+  background: darkolivegreen;
+  border-color: darkolivegreen;
+}
+
+.donationType .checkbox input + span:after {
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-left: 0;
+  left: 6px;
+  top: 3px;
+  transform: rotate(20deg);
+  opacity: 0;
+}
+
+.donationType .checkbox input:checked + span:after {
+  opacity: 1;
+  transform: rotate(43deg) translate(1px, 0);
+}
+
+.donationType .checkbox:hover input:not(:checked) + span:before {
+  border-color: darkolivegreen;
+}
+
+
+/*피드 디자인*/
+
+.fundraiserContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  
+  gap: 20px; 
+  margin: 0 auto; 
+  max-width: 1200px;  
+  padding: 20px;  
+}
+
+@media screen and (max-width: 768px) {
+  .fundraiserContainer {
+    grid-template-columns: repeat(2, 1fr); /* 화면 크기가 768px 이하일 때 2열로 표시 */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .fundraiserContainer {
+    grid-template-columns: 1fr; /* 화면 크기가 480px 이하일 때 1열로 표시 */
+  }
+}
+
+#fundraiserDetails {
+  justify-content: space-between; 
+  display: flex;
+  flex-direction: column; 
+  width: 85%;
+  text-align: justify;
+  margin-bottom: 30px;
+}
+
+#fundraiserDetails .fundraiserTitle {
+  text-align: center;
+  font-size: 40;
+  font-weight: bold;
+
+  margin-top: 50px;
+  margin-bottom: 50px;
+}  
+#fundraiserDetails .contractMetaData {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 30px;
+  height: 40px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profileImage {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.contractOwner {
+  cursor: pointer;
+  color: rgb(175, 175, 167);
+  position: relative;
+}
+
+.contractOwner:hover::after {
+  color: darkolivegreen;
+  font-size: medium;
+  content: attr(fullAddress);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.creationTime {
+  margin-left: auto;
+  margin-right: 30px; 
+  text-align: right;
+}
+
+
+#fundraiserDetails .fundraiserDescription {
+  padding: 30px 30px;
+  text-align: justify;
+  font-size: 20px;
+}
+
+#fundraiserDetails .fundraiserFinishTime {
+  padding: 10px 10px;
+  text-align: justify;
+  font-size: 18px;
+  color:#666;
+}
+
+#fundraiserDetails .fundraiserImage {
+  margin: auto;
+  width: 80%;
+}
+
+
+/*progress bar*/
+
+.fundraisingStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.raisedAmount {
+  font-size: 1.5em;
+  color: #000;
+}
+
+.progressPercentage {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #008df9;
+}
+
+.progressBarContainer {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  margin: 10px 0;
+}
+
+.progressBar {
+  background-color: #008df9;
+  height: 100%;
+  width: 0;
+}
+
+.supporterInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.targetAmount {
+  color: #666;
+}
+
+
+
+
+/*아이템 상세사항*/
+.items {
+  margin-top: 30px;
+  list-style: none;
+  padding: 0;
+}
+
+.items ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.itemInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  height: 50px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.itemInfo:last-child {
+  border-bottom: none;
+}
+
+.itemNamePrice {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-start; 
+}
+
+.itemName {
+  color: rgb(55, 55, 55);
+  font-weight: bold;
+  font-size: 1.1em;
+  margin: 3px;
+}
+
+.itemPrice {
+  color: #666;
+  margin: 3px;
+  font-size: 0.9em;
+}
+
+.itemDetails {
+  display: flex;
+  align-items: center;
+  width: 55%; 
+  justify-content: space-between;
+}
+
+.itemQuantity {
+  color: #666;
+  margin: 0;
+}
+
+.totalPrice {
+  font-weight: semi-bold;
+  margin: 0;
+  color: rgb(55, 55, 55);
+}
+
+#donateModalOpenButton {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  width:200px;
+  height:40px;
+  background: darkolivegreen;
+  color: beige;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+#uploadUsageButton {
+  display: none;
+  margin-top: 20px;
+  margin-bottom: 60px;
+  width:200px;
+  height:40px;
+  background: darkolivegreen;
+  color: beige;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+/*후원하기 모달*/
+
+
+
+/*fundraiser creation*/
+
+.usagePost,
+.createFundraiser {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;  
+  width: 80%;  
+  padding: 20px;
+  text-align: center;
+}
+
+.createFundraiser h2 {
+  text-align: center;
+  margin: 30px;
+  margin-bottom: 60px;
+}
+
+.usageInputContainer,
+.fundraiserInputContainer {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;  
+}
+
+
+.fundraiserInput {
+  border-bottom: 2px solid darkolivegreen;
+  margin-bottom: 50px;
+  width: 500px;
+}
+
+
+
+.fundraiserType {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.fundraiserTypeContainer {
+  position: relative;
+  border: 2px solid darkolivegreen;
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  margin: 5px 10px;
+  position: relative;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row; 
+  gap: 20px;
+}
+
+.fundraiserTypeContainer label:first-child {
+  border: none;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  padding: 0 5px;
+  color: darkolivegreen;
+  background: beige;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.fundraiserTypeContainer label + label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+.fundraiserTypeContainer label {
+  border: 1px solid #7b934b;
+  border-radius: 99em;
+  display: flex;
+  cursor: pointer;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  font-size: 20;
+}
+
+.fundraiserTypeContainer input {
+  position: absolute;
+  left: -9999px;
+}
+
+.fundraiserTypeContainer input:checked + span {
+  background-color: darkolivegreen;
+  color: beige;
+}
+
+.fundraiserTypeContainer input:checked + span:before {
+  box-shadow: inset 0 0 0 0.4375em #7b934b;
+}
+
+.fundraiserTypeContainer span {
+  display: flex;
+  align-items: center;
+  padding: 0.375em 0.75em 0.375em 0.375em;
+  border-radius: 99em;
+  transition: 0.25s ease;
+  padding: 7px 10px;
+}
+
+.fundraiserTypeContainer span:hover {
+  background-color: #7b934b;
+  color: beige;
+}
+
+.fundraiserTypeContainer span:before {
+  border: 2px solid #7b934b;
+  display: flex;
+  flex-shrink: 0;
+  content: "";
+  background-color: #fff;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  margin-right: 0.375em;
+  transition: 0.25s ease;
+  box-shadow: inset 0 0 0 0.125em beige;
+}
+
+
+.usageInputTitle, 
+.fundraiserInputTitle {
+  width: 100%;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  border:none;
+  outline:none;
+  color: darkolivegreen;
+  font-size:18px;
+  background: none;
+}
+
+
+#fundraiserName,
+#fundraiserFinishTime { 
+  width: 100%;
+  border:none;
+  outline:none;
+  color: darkolivegreen;
+  font-size:16px;
+  height:25px;
+  background: none;
+  padding: 10px;
+}
+
+
+#fundraiserTargetAmount {
+  width: 100%;
+  border: none;
+  outline: none;
+  color: darkolivegreen;
+  font-size: 16px;
+  height: 25px;
+  background: none;
+  padding: 10px;
+  white-space: nowrap;  /* Prevents the text from wrapping */
+  overflow: hidden;     /* Keeps the text within the input field */
+  text-overflow: ellipsis;
+}
+
+.fundraiserTargetAmountPlaceholderGrey::-webkit-input-placeholder {
+  color: rgb(175, 175, 167);
+}
+
+.fundraiserTargetAmountPlaceholderPink::-webkit-input-placeholder {
+  color: rgb(244,157,177);
+}
+
+#fundraiserName::placeholder,
+#fundraiserFinishTime::placeholder,
+#fundraiserDescription::placeholder {
+  color: rgb(175, 175, 167);
+}
+
+
+#usageDescription,
+#fundraiserDescription {
+  width: 500px;
+  max-width: 700px;
+  height:200px;
+  border: 2px solid darkolivegreen;
+  border-radius: 5px;
+  outline:none;
+  color: darkolivegreen;
+  background: none;
+  font-size:16px;
+  resize: none;
+  padding: 20px;
+}
+
+#registerUsage,
+#registerFundraiser {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width:200px;
+  height:40px;
+  background: darkolivegreen;
+  color: beige;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+.gweiUnit {
+  white-space: nowrap; 
+  color: darkolivegreen;
+  margin-left: 5px;
+  font-size: 16px;
+}
+
+
+.fundraiserDescriptionText {
+  margin-bottom: 50px;
+  color: #7b934b;
+  font-size: 16px;
+  text-align: center;
+}
+
+
+
+
+/*물품형 후원 생성하기*/
+
+
+.commodityTypeItemContainerTitle {
+  width: 100%;
+  font-weight: bold;
+  text-align: left;
+  margin-left: -120px;
+  margin-top: 30px;
+  border:none;
+  outline:none;
+  color: darkolivegreen;
+  font-size:18px;
+  background: none;
+}
+
+.commodityTypeItemContainer {
+  width: 120%;
+  max-width: 120%;
+  border: 2px solid darkolivegreen;
+  margin-top: 10px;
+  background-color: #fffff3;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-self: auto;
+  padding: 20px;
+  gap: 20px
+}
+
+#addItemButton {
+  border-radius: 15px;
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-self: auto;
+  align-items: center; 
+  background-color: #89ccff;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  padding-right: 10px;
+  border: none;
+}
+
+.commodityTypeItem {
+  display: flex;
+  flex-direction: row;
+  align-self: auto;
+  align-items: center; 
+}
+
+.deleteItem {
+  font-size: 18px;
+  font-weight: bold;  
+}
+
+
+
+
+
+
+/*모달 창*/
+ 
+.donateModal,
+.addItemModal {
+  display: none; 
+  position: fixed; 
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow-x: hidden; 
+  overflow-y: auto;
+  background-color: rgba(0,0,0,0.4);
+  -webkit-animation-name: fadeIn; 
+  -webkit-animation-duration: 0.2s; 
+  animation-name: fadeIn;
+  animation-duration: 0.2s;
+  align-items: center;
+  justify-content: center; 
+}
+
+.donateModalContent {
+  background-color: #fffff3;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+  height: 40%; /* Could be more or less, depending on content */
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  animation-name: animatetop;
+  animation-duration: 0.2s;
+  border-radius: 30px;
+}
+
+.addItemModalContent {
+  background-color: #fffff3;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+  height: 60%; /* Could be more or less, depending on content */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  animation-name: animatetop;
+  animation-duration: 0.2s;
+  border-radius: 30px;
+}
+
+.donateModalClose,
+.addItemModalClose {
+  margin-left: 95%;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@-webkit-keyframes fadeOut {
+  from {opacity: 1;}
+  to {opacity: 0;}
+}
+
+@keyframes fadeOut {
+  from {opacity: 1;}
+  to {opacity: 0;}
+}
+
+.donateInputContainer,
+.addItemInputContainer {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  gap: 30px;
+}
+
+.addItemInput {
+  position: relative;
+  border: 1px solid #7b934b;
+  padding: 8px;
+  border-radius: 5px;
+  display: flex;
+  margin: 5px 10px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; 
+  gap: 20px;
+  width: 60%;
+}
+
+.donateInput {
+  position: relative;
+  border: 1px solid #7b934b;
+  padding: 8px;
+  border-radius: 5px;
+  display: flex;
+  margin: 30px 10px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; 
+  gap: 20px;
+  width: 60%;
+}
+
+.donateInput label,
+.addItemInput label {
+  margin-right: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.donateInput input,
+.addItemInput input {
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  display: flex;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background-color: #fffff3;
+}
+
+.donateInput label:first-child,
+.addItemInput label:first-child {
+  border: none;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  padding: 0 5px;
+  color: darkolivegreen;
+  background-color: #fffff3;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.donateInput label + label,
+.addItemInput label + label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.donateButton,
+.addItemDone {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  width:200px;
+  height:40px;
+  background: darkolivegreen;
+  color: beige;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+
+/* 사용내역 */
+
+#usagePostHeader {
+  text-align: center;
+  margin: 30px;
+  margin-bottom: 60px;
+}
+
+#fundraiserDetailsContainerSummary{
+  margin-left: 10%;
+  font-size: 18px;
+}

@@ -1,0 +1,62 @@
+<!DOCYTYPE HTML>
+<html>
+<head>
+  <title>Givernance</title>
+  <link rel="stylesheet" type="text/css" href="css/style_dark.css">
+  <meta charset="UTF-8">
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+</head>
+
+<body>
+  <div class="upperLinks">
+      <a id="mainPageLink" href="index.html">&#x1F54A Givernance</a>
+      <div class="logIn_signUp">
+          <a id="logIn" href="login.html">Log In</a>
+          <a id="signUp" href="signup.html">Sign Up</a>
+      </div>    
+  </div>
+  <div>
+      <img id="mainDove" src="images/mainDove.png" title="dove" href="createFundraiser_test.html">
+      <p id="mainSlogan">START YOUR <b>GIVING</b><br>DO YOUR <b>GIVERNANCE</b></p>
+  </div>
+  <div class="mainContent">
+    <div class="buttonContainer">
+      <label>
+        <input type="radio" name="fundraiserState" value="fundraising" checked/>
+        <span>모금중</span>
+      </label>
+      <label>
+        <input type="radio" name="fundraiserState" value="finished"/>
+        <span>모금완료</span>
+      </label>
+      <label>
+        <input type="radio" name="fundraiserState" value="usageUploaded"/>
+        <span>증빙완료</span>
+      </label>
+      <label>
+        <input type="radio" name="fundraiserState" value="votingDone"/>
+        <span>투표완료</span>
+      </label>
+    </div>
+    <div class="donationType">
+      <label class="checkbox">
+          <input type="checkbox" checked>
+          <span>단기후원</span>
+      </label>
+      <label class="checkbox">
+          <input type="checkbox">
+          <span>정기후원</span>
+      </label>
+    </div>
+    <div class="fundraiserContainer">
+    </div>
+  </div>
+  <a id="creationTest" href="createFundraiser.html">test</a>
+  <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.5); align-items: center; justify-content: center; z-index: 1000;">
+    <div id="loadingAnimation" style="width: 20%;"></div>
+  </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
+<script src="https://unpkg.com/helia/dist/index.min.js"></script>
+<script type="module" src="./js/client.js"></script>
+</body>
+</html>

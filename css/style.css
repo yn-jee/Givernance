@@ -1,0 +1,490 @@
+body {
+  background-color: darkolivegreen;
+  color: beige;
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+div {
+  text-align: center;
+}
+
+.upperLinks {
+  text-align: left;
+  font-size: larger;
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+
+#mainPageLink {
+  margin-left: 40px;
+  font-weight: 500;
+  font-size: x-large;
+  color: beige;
+  text-decoration: none;
+}
+
+
+.logIn_signUp {
+  text-align: right;
+}
+
+#logIn {
+  margin-right: 60px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: beige;
+  text-decoration: none;
+}
+
+#signUp {
+  margin-right: 60px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: beige;
+  text-decoration: none;
+}
+
+
+#mainDove {
+  height: 500px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#mainSlogan {
+  font-size: 50px;
+}
+
+.mainContent {
+  margin: 0 auto;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  width: 70%;
+  background-color : beige;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+	align-self: auto;
+  align-items: center; /* 가로 방향으로 중앙 정렬 */
+}
+
+
+/*       라디오버튼      */
+
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.buttonContainer label {
+  display: flex;
+  cursor: pointer;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  font-size: 20;
+  margin-bottom: 0.375em;
+}
+
+.buttonContainer input {
+  position: absolute;
+  left: -9999px;
+}
+
+.buttonContainer input:checked + span {
+  background-color: #7b934b; /* Equivalent of mix(#fff, $primary-color, 84%) */
+  color: beige;
+}
+
+.buttonContainer input:checked + span:before {
+  box-shadow: inset 0 0 0 0.4375em darkolivegreen; /* $primary-color */
+}
+
+.buttonContainer span {
+  display: flex;
+  align-items: center;
+  padding: 0.375em 0.75em 0.375em 0.375em;
+  border-radius: 99em;
+  transition: 0.25s ease;
+  padding: 7px 10px;
+}
+
+.buttonContainer span:hover {
+  background-color: #7b934b; /* Equivalent of mix(#fff, $primary-color, 84%) */
+  color: beige;
+}
+
+.buttonContainer span:before {
+  display: flex;
+  flex-shrink: 0;
+  content: "";
+  background-color: #fff;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  margin-right: 0.375em;
+  transition: 0.25s ease;
+  box-shadow: inset 0 0 0 0.125em darkolivegreen; /* $primary-color */
+}
+
+.buttonContainer {
+  width: 90%;
+  display: flex;
+  margin-top: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row; 
+  color: darkolivegreen;
+  gap: 30px;
+}
+
+.buttonContainer button {
+  flex: none;
+}
+
+
+/*체크박스*/
+
+.donationType {
+  width: 90%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 20px;
+  height: 18px;
+  align-items: center;
+}
+
+.donationType .checkbox {
+  margin: 0 0 12px 0;
+  display: table;
+  cursor: pointer;
+  align-items: center;
+}
+
+.donationType .checkbox.inline {
+  margin: 0 12px 0 0;
+  display: inline-block;
+}
+
+.donationType .checkbox input {
+  display: none;
+}
+
+.donationType .checkbox input + span {
+  color: #6C7486;
+  height: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  display: block;
+  padding-left: 18px;
+}
+
+.donationType .checkbox input + span:not(:empty) {
+  padding-left: 30px;
+}
+
+.donationType .checkbox input + span:before,
+.donationType .checkbox input + span:after {
+  content: '';
+  display: block;
+  left: 0;
+  top: 0;
+  position: absolute;
+  transition: transform .3s ease, opacity .2s ease, background .2s ease;
+}
+
+.donationType .checkbox input + span:before {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #CDD9ED;
+  background: #fff;
+  border-radius: 4px;
+  transition: background .3s ease, border-color .3s ease;
+}
+
+.donationType .checkbox input:checked + span:before {
+  background: darkolivegreen;
+  border-color: darkolivegreen;
+}
+
+.donationType .checkbox input + span:after {
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-left: 0;
+  left: 6px;
+  top: 3px;
+  transform: rotate(20deg);
+  opacity: 0;
+}
+
+.donationType .checkbox input:checked + span:after {
+  opacity: 1;
+  transform: rotate(43deg) translate(1px, 0);
+}
+
+.donationType .checkbox:hover input:not(:checked) + span:before {
+  border-color: darkolivegreen;
+}
+
+
+/*피드 디자인*/
+
+.fundraiserContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3개의 column을 만들고 각 column의 크기는 같게 설정합니다. */
+  gap: 20px; /* 각 그리드 항목 사이의 간격을 설정합니다. */
+  margin: 0 auto; /* 중앙 정렬을 위한 마진 설정 */
+  max-width: 1200px; /* 최대 너비를 설정합니다. 필요에 따라 조절할 수 있습니다. */
+  padding: 20px; /* 컨테이너의 안쪽 여백을 설정합니다. */
+}
+
+@media screen and (max-width: 768px) {
+  .fundraiserContainer {
+    grid-template-columns: repeat(2, 1fr); /* 화면 크기가 768px 이하일 때 2열로 표시 */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .fundraiserContainer {
+    grid-template-columns: 1fr; /* 화면 크기가 480px 이하일 때 1열로 표시 */
+  }
+}
+
+
+#fundraiserBox {
+  border: 2px solid #7b934b;
+  padding: 20px; 
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 300px;
+  transition: all 0.3s cubic-bezier(0.42, 0.0, 0.58, 1.0);
+  color: black;
+  aspect-ratio: 1 / 1.3;
+  justify-content: space-between; 
+  display: flex;
+  flex-direction: column; 
+}
+
+#fundraiserBox:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  transform: translateY(-5px);
+}
+
+#fundraiserBox .donationBox {
+  display: block;
+  width: 100%;
+  padding: 0;
+}
+
+#fundraiserBox .fundraiserHeading {
+  font-size: 28px;
+}
+
+#fundraiserBox .fundraiserData {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #666;
+}
+
+#fundraiserBox .fundraiserData span {
+  padding: 0;
+}
+
+
+#fundraiserBox .fundraiserDescription {
+  font-size: 14px;
+}
+
+
+/*QR code*/
+
+.qrcodeGeneration {
+  margin-top:80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qrcodeImage {
+  margin: auto;
+}
+
+#qrcode {
+  width: 200px;
+}
+
+#qrcodeInput {
+  width: 40%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+#localDataInput {
+  width: 40%;
+  margin: auto;
+}
+
+/*login, signup*/
+
+#signupSlogan {
+  font-size: 30px;
+}
+
+/*mobile*/
+
+.upperLinksMobile {
+  text-align: left;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#mainPageLinkMobile {
+  margin-left: 5%;
+  font-weight: 500;
+  font-size: 10;
+  color: beige;
+  text-decoration: none;
+}
+
+
+#codeInput {
+  width: 70%;
+}
+
+.codeForTest {
+  margin: auto;
+
+}
+
+/*fundraiser creation*/
+
+.createFundraiser {
+  position:absolute;
+  width:400px;
+  height:400px;
+  padding: 30px, 20px;
+  text-align:center;
+  top:40%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  border-radius: 15px;
+}
+
+.createFundraiser h2 {
+  text-align: center;
+  margin: 30px;
+}
+
+
+.fundraiserInput {
+  border-bottom: 2px solid rgb(241, 241, 239);
+  margin: 30px;
+  padding: 10px 10px;
+}
+
+#fundraiserName {
+  width: 100%;
+  border:none;
+  outline:none;
+  color: white;
+  font-size:16px;
+  height:25px;
+  background: none;
+}
+
+#fundraiserName::placeholder {
+  color: beige;
+}
+
+#fundraiserTargetAmount {
+  width: 100%;
+  border:none;
+  outline:none;
+  color: white;
+  font-size:16px;
+  height:25px;
+  background: none;
+}
+
+#fundraiserTargetAmount::placeholder {
+  color: beige;
+}
+
+#fundraiserFinishTime {
+  width: 100%;
+  border:none;
+  outline:none;
+  color: white;
+  font-size:16px;
+  height:25px;
+  background: none;
+}
+
+#fundraiserFinishTime::placeholder {
+  color: beige;
+}
+
+#fundraiserBeneficiary {
+  width: 100%;
+  border:none;
+  outline:none;
+  color: white;
+  font-size:16px;
+  height:25px;
+  background: none;
+}
+
+#fundraiserBeneficiary::placeholder {
+  color: beige;
+}
+
+#fundraiserDescription {
+  width: 100%;
+  border:none;
+  outline:none;
+  color: darkolivegreen;
+  font-size:16px;
+  height:200px;
+  width: 100%;
+  background: beige;
+  margin-bottom: 20px;
+  resize: none;
+}
+
+
+
+#registerFundraiser {
+  position:relative;
+  left:40%;
+  transform: translateX(-50%);
+  margin-bottom: 20px;
+  width:80%;
+  height:40px;
+  background: beige;
+  background-position: left;
+  background-size: 200%;
+  font-weight: bold;
+  border:none;
+  cursor:pointer;
+  transition: 0.4s;
+  display:inline;
+}
+
+.target-amount {
+  line-height: 40%;
+}
+
+.finish-date {
+  line-height: 40%;
+}
