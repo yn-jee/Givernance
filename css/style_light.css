@@ -333,7 +333,7 @@ form {
 }
 
 
-#fundraiserDetails .fundraiserDescription {
+.fundraiserDescription {
   padding: 30px 30px;
   text-align: justify;
   font-size: 20px;
