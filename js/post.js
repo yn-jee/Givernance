@@ -1,6 +1,8 @@
 import { LoadingAnimation } from './LoadingAnimation.js';
 import { minidenticonSvg } from 'https://cdn.jsdelivr.net/npm/minidenticons@4.2.1/minidenticons.min.js';
 import { fundraiserFactoryAddress, fundraiserFactoryABI, fundraiserABI } from './contractConfig.js';
+import { IpfsContractAddress, IpfsContractABI, storeData, getData } from './IPFSContractConfig.js';
+import { initializeProvider } from './initializeProvider.js';
 
 
 const animation = new LoadingAnimation('../images/loadingAnimation.json');
@@ -8,16 +10,6 @@ await animation.loadAnimation();
 
 const urlParams = new URLSearchParams(window.location.search);
 const contractAddress = urlParams.get('contractAddress'); // 'contractAddress' 파라미터의 값 가져오기
-
-// 이더리움 프로바이더 초기화
-async function initializeProvider() {
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    // 연결된 메타마스크 주소
-    const connectedAddress = accounts[0]; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    return { provider, connectedAddress };
-}
 
 
 async function getEvents(provider, fundraiserFactoryAddress) {
@@ -93,7 +85,7 @@ async function getBlockTimestamp(provider, blockNumber) {
 }
 
 // 컨트랙트 정보를 가져와 페이지에 표시하는 함수
-async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, address, factoryAddress) {
+async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddress, address, factoryAddress) {
     try {
         animation.startTask();
 
@@ -200,19 +192,31 @@ async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, addr
         var donateButton = document.querySelector('.donateButton');
 
 
+        
         // 현재 시각과 마감 시각 비교
         if (new Date().getTime() > new Date((await contract.finishTime()).toNumber() * 1000).getTime()) {
             // 마감되었고, 연결된 주소와 컨트랙트 생성자 주소가 같을 경우 usage 등록 버튼 생성
             if (connectedAddress == contractOwner.toLowerCase()) {
-                // 후원 버튼 숨기기
-                document.querySelector('#donateModalOpenButton').style = 'display: none;';
-                // 사용 내역 등록 버튼 보이기
-                document.querySelector('#uploadUsageButton').style = 'display: block;';
-
-                const uploadUsageAddress = "usagePost.html?contractAddress=" + contractAddress;
-                document.querySelector('#uploadUsageButton').addEventListener('click', function() {
-                    window.location.href = uploadUsageAddress;
-                });
+                // 사용 내역이 등록되었는지 확인
+                const contract = new ethers.Contract(IpfsContractAddress, IpfsContractABI, signer);
+                const data = await getData(contract, contractAddress);
+                if (data.hashes.length > 0) {
+                    document.querySelector('#donateModalOpenButton').disabled = true;
+                    document.querySelector('#donateModalOpenButton').textContent = "이미 사용 내역이 등록된 모금함입니다.";
+                    document.querySelector('#donateModalOpenButton').style = 'background: #e0e0e0; color: white; width: auto; padding: 0px 15px; text-align: center;';
+                }
+                
+                else {
+                    // 후원 버튼 숨기기
+                    document.querySelector('#donateModalOpenButton').style = 'display: none;';
+                    // 사용 내역 등록 버튼 보이기
+                    document.querySelector('#uploadUsageButton').style = 'display: block;';
+    
+                    const uploadUsageAddress = "usagePost.html?contractAddress=" + contractAddress;
+                    document.querySelector('#uploadUsageButton').addEventListener('click', function() {
+                        window.location.href = uploadUsageAddress;
+                    });
+                }
             }
             else {
                 document.querySelector('#donateModalOpenButton').disabled = true;
@@ -291,8 +295,8 @@ async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, addr
 // 메인 실행
 (async function() {
     if (contractAddress) {
-        const { provider, connectedAddress } = await initializeProvider();
-        await fetchAndDisplayFundraiserDetails(provider, connectedAddress, contractAddress, fundraiserFactoryAddress);
+        const { provider, signer, connectedAddress } = await initializeProvider();
+        await fetchAndDisplayFundraiserDetails(provider, signer, connectedAddress, contractAddress, fundraiserFactoryAddress);
     } else {
         document.getElementById('fundraiserDetails').innerHTML = '<p>No contract address provided.</p>';
     }

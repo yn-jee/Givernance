@@ -617,7 +617,20 @@ form {
 }
 
 
-.usageInputTitle, 
+.usageInputTitle {
+  width: 100%;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 20px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  border:none;
+  outline:none;
+  color: darkolivegreen;
+  font-size:18px;
+  background: none;
+}
+
 .fundraiserInputTitle {
   width: 100%;
   font-weight: bold;
@@ -630,7 +643,6 @@ form {
   font-size:18px;
   background: none;
 }
-
 
 #fundraiserName,
 #fundraiserFinishTime { 
@@ -688,6 +700,7 @@ form {
   resize: none;
   padding: 20px;
 }
+
 
 #registerUsage,
 #registerFundraiser {
@@ -967,16 +980,40 @@ form {
 
 
 
+
+
+
+.usageImage {
+  width: 500px;
+  max-width: 700px;
+  height: 300px;
+  border: 2px solid darkolivegreen;
+  border-radius: 5px;
+  outline:none;
+  background-color: #fff;
+  font-size:16px;
+  resize: none;
+  padding: 20px;
+}
+
 .imagePreview {
   display: flex;
-  flex-wrap: wrap;
-  list-style-type: none;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-top: 10px;
   padding: 0;
+  list-style-type: none;
 }
+
 .imagePreview li {
-  margin: 10px;
+  display: inline-block;
+  margin-right: 10px;
 }
+
 .imagePreview img {
-  max-width: 100px;
-  max-height: 100px;
+  height: 260px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background-color: #fff;
 }

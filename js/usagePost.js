@@ -3,6 +3,7 @@ import { minidenticonSvg } from 'https://cdn.jsdelivr.net/npm/minidenticons@4.2.
 import { fundraiserFactoryAddress, fundraiserFactoryABI, fundraiserABI } from './contractConfig.js';
 import { deployGiversToken, deployGiver, GiversTokenABI, GiversTokenBytecode, GiverABI, GiverBytecode } from "./tokenDeploy.js";
 import { IpfsContractAddress, IpfsContractABI, storeData, getData } from './IPFSContractConfig.js';
+import { initializeProvider } from './initializeProvider.js';
 
 const animation = new LoadingAnimation('../images/loadingAnimation.json');
 await animation.loadAnimation();
@@ -11,18 +12,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const contractAddress = urlParams.get('contractAddress'); // 'contractAddress' 파라미터의 값 가져오기
 
 
-
-
-// 이더리움 프로바이더 초기화
-async function initializeProvider() {
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    // 연결된 메타마스크 주소
-    const connectedAddress = accounts[0]; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    
-    return { provider, signer, connectedAddress };
-}
 
 async function getEvents(provider, fundraiserFactoryAddress) {
     const fundraiserFactory = new ethers.Contract(fundraiserFactoryAddress, fundraiserFactoryABI, provider);
@@ -302,7 +291,17 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
 (async function() {
     if (contractAddress) {
         const { provider, signer, connectedAddress } = await initializeProvider();
+        const contract = new ethers.Contract(IpfsContractAddress, IpfsContractABI, signer);
+        const data = await getData(contract, contractAddress);
         await fetchAndDisplayFundraiserDetails(provider, signer, connectedAddress, contractAddress, fundraiserFactoryAddress);
+
+        // 이미 사용 내역이 등록된 경우 등록 불가
+        if (data.hashes.length > 0) {
+            const registerUsageButton = document.getElementById('registerUsage');
+            registerUsageButton.setAttribute('disabled',true);
+            registerUsageButton.innerText = "이미 사용 내역이 등록된 모금함입니다.";
+            registerUsageButton.style = 'background: #e0e0e0; color: white; width: auto; padding: 0px 15px; text-align: center;';
+        }
     } else {
         document.getElementById('fundraiserDetails').innerHTML = '<p>No contract address provided.</p>';
     }
