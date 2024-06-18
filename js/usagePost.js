@@ -2,6 +2,7 @@ import { LoadingAnimation } from './LoadingAnimation.js';
 import { minidenticonSvg } from 'https://cdn.jsdelivr.net/npm/minidenticons@4.2.1/minidenticons.min.js';
 import { fundraiserFactoryAddress, fundraiserFactoryABI, fundraiserABI } from './contractConfig.js';
 import { deployGiversToken, deployGiver, GiversTokenABI, GiversTokenBytecode, GiverABI, GiverBytecode } from "./tokenDeploy.js";
+import { IpfsContractAddress, IpfsContractABI, storeData, getData } from './IPFSContractConfig.js';
 
 const animation = new LoadingAnimation('../images/loadingAnimation.json');
 await animation.loadAnimation();
@@ -10,14 +11,17 @@ const urlParams = new URLSearchParams(window.location.search);
 const contractAddress = urlParams.get('contractAddress'); // 'contractAddress' 파라미터의 값 가져오기
 
 
+
+
 // 이더리움 프로바이더 초기화
 async function initializeProvider() {
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
     // 연결된 메타마스크 주소
     const connectedAddress = accounts[0]; 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    return { provider, connectedAddress };
+    const signer = provider.getSigner();
+    
+    return { provider, signer, connectedAddress };
 }
 
 async function getEvents(provider, fundraiserFactoryAddress) {
@@ -92,7 +96,7 @@ async function getBlockTimestamp(provider, blockNumber) {
     return block.timestamp;
 }
 
-async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, address, factoryAddress) {
+async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddress, address, factoryAddress) {
     try {
         animation.startTask();
 
@@ -194,100 +198,111 @@ async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, addr
         document.getElementById('fundraiserDetails').innerHTML = '<p>Error fetching fundraiser details.</p>';
         animation.endTask(); // 에러 발생 시에도 로딩 종료
     }
-}
 
-function getImageFiles(e) {
-    const uploadFiles = [];
-    const files = e.currentTarget.files;
-    const imagePreview = document.querySelector('.imagePreview');
-    imagePreview.innerHTML = ''; // 기존 미리보기 초기화
 
-    if ([...files].length > 5) {
-        alert('이미지는 최대 5개까지 업로드가 가능합니다.');
-        return;
-    }
+    function getImageFiles(e) {
+        const uploadFiles = [];
+        const files = e.currentTarget.files;
+        const imagePreview = document.querySelector('.imagePreview');
+        imagePreview.innerHTML = ''; // 기존 미리보기 초기화
 
-    // 파일 타입 및 크기 검사
-    [...files].forEach(file => {
-        if (!file.type.match("image/.*")) {
-            alert('이미지 파일만 업로드가 가능합니다.');
+        if ([...files].length >= 6) {
+            alert('이미지는 최대 5개 까지 업로드가 가능합니다.');
+            imagePreview.innerHTML = '';
             return;
         }
 
-        if (file.size > 10 * 1024 * 1024) {
-            alert('이미지 파일 크기는 10MB를 초과할 수 없습니다.');
-            return;
-        }
+        // 파일 타입 검사
+        [...files].forEach(file => {
+            if (!file.type.match("image/.*")) {
+                alert('이미지 파일만 업로드가 가능합니다.');
+                return;
+            }
 
-        uploadFiles.push(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const preview = createElement(e, file);
-            imagePreview.appendChild(preview);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function createElement(e, file) {
-    const li = document.createElement('li');
-    const img = document.createElement('img');
-    img.setAttribute('src', e.target.result);
-    img.setAttribute('data-file', file.name);
-    li.appendChild(img);
-
-    return li;
-}
-
-// 파일 선택 시 이미지 미리보기 생성
-document.querySelector('.imageUpload').addEventListener('change', getImageFiles);
-
-// Register 버튼 클릭 시 서버로 이미지 업로드
-document.getElementById('registerUsage').addEventListener('click', async function(event) {
-    event.preventDefault();
-    const fileInput = document.querySelector('.imageUpload');
-    const files = fileInput.files;
-
-    if (files.length === 0) {
-        alert('Please select a file');
-        return;
-    }
-
-    const usageDescription = document.getElementById('usageDescription').value;
-    if (!usageDescription) {
-        alert('Please enter a description.');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('json', JSON.stringify({ description: usageDescription }));
-
-    // 파일 추가
-    [...files].forEach(file => {
-        formData.append('files', file);
-    });
-
-    try {
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
+            // 파일 갯수 검사
+            if ([...files].length < 6) {
+                uploadFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = createElement(e, file);
+                    imagePreview.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
         });
-
-        const result = await response.json();
-        alert("Files uploaded to IPFS with hash: " + result.IpfsHash);
-    } catch (error) {
-        console.error('Error uploading files:', error);
-        alert("Error uploading files");
     }
-});
 
+    function createElement(e, file) {
+        const li = document.createElement('li');
+        const img = document.createElement('img');
+        img.setAttribute('src', e.target.result);
+        img.setAttribute('data-file', file.name);
+        li.appendChild(img);
+
+        return li;
+    }
+
+    // 파일 선택 시 이미지 미리보기 생성
+    document.querySelector('.imageUpload').addEventListener('change', getImageFiles);
+
+    // Register 버튼 클릭 시 서버로 이미지 업로드
+    document.getElementById('registerUsage').addEventListener('click', async function(event) {
+        animation.startTask();
+        event.preventDefault();
+
+        const textarea = document.getElementById('usageDescription');
+        const text = textarea.value;
+
+        if (text.length <= 1000) {
+        } else {
+            alert('글자 수가 1000자를 초과할 수 없습니다.');
+            return;
+        }
+
+        const fileInput = document.querySelector('.imageUpload');
+
+        const formData = new FormData();
+        const textBlob = new Blob([text], { type: 'text/plain' });
+        formData.append('file', textBlob, 'usageDescription.txt'); 
+
+
+        [...fileInput.files].forEach(file => formData.append('file', file));
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const IpfsHashes = [];
+            const result = await response.json();
+            result.forEach(data => {
+                console.log(data.IpfsHash);
+                IpfsHashes.push(data.IpfsHash);
+            })
+
+            // interact w/ contract instance
+            const contract = new ethers.Contract(IpfsContractAddress, IpfsContractABI, signer);
+
+            console.log(await storeData(contract, contractAddress, IpfsHashes));
+
+            // console.log(await getData(contract, contractAddress));
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert("Error uploading file");
+        }
+
+        animation.endTask();
+    });
+
+}
 
 
 // 메인 실행
 (async function() {
     if (contractAddress) {
-        const { provider, connectedAddress } = await initializeProvider();
-        await fetchAndDisplayFundraiserDetails(provider, connectedAddress, contractAddress, fundraiserFactoryAddress);
+        const { provider, signer, connectedAddress } = await initializeProvider();
+        await fetchAndDisplayFundraiserDetails(provider, signer, connectedAddress, contractAddress, fundraiserFactoryAddress);
     } else {
         document.getElementById('fundraiserDetails').innerHTML = '<p>No contract address provided.</p>';
     }

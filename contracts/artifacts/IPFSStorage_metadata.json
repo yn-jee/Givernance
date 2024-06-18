@@ -1,0 +1,88 @@
+{
+	"compiler": {
+		"version": "0.8.25+commit.b61c2a91"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "targetContractAddress",
+						"type": "string"
+					}
+				],
+				"name": "getData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					},
+					{
+						"internalType": "string[]",
+						"name": "",
+						"type": "string[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "targetContractAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string[]",
+						"name": "hashes",
+						"type": "string[]"
+					}
+				],
+				"name": "storeData",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/IPFSStorage.sol": "IPFSStorage"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/IPFSStorage.sol": {
+			"keccak256": "0x0975b50e80f2d40d523fa1ad24dbade81543ea357c1f30fba396e3bbde3e1b68",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://23f72a36916c887bbaef3833511cf9ef35ef97c3a2c828909e6c9ae8630ed3a5",
+				"dweb:/ipfs/QmRyVrxzTmR51DH4mppCLV32E9B3TYqYeZfWSqRiXNBFvU"
+			]
+		}
+	},
+	"version": 1
+}
