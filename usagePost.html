@@ -32,12 +32,27 @@
         <div class="usageInputContainer">
             <div class="usageInputTitle">상세 설명</div>
             <textarea id="usageDescription" placeholder="후원금 사용 내역의 상세 설명을 입력하세요."></textarea>
-            <div class="usageInputTitle">사진 업로드</div>
-            <input type="file" class="usageImage" accept="image/*" required multiple>
-            <ul class="imagePreview"></ul>
+            <div class="uploadTitle">사진 업로드</div>
+            <div class="uploadContainer">
+                <input type="file" id="usageImage" class="usageImage" accept="image/*" required multiple style="display: none;">
+                <label for="usageImage" class="uploadLabel">
+                    <div class="uploadBox">
+                        <img src="images/upload.png" alt="Upload Icon" class="uploadIcon">
+                        <p>Upload Image</p>
+                    </div>
+                </label>
+                <div class="imagePreviewContainer">
+                    <ul class="imagePreview"></ul>
+                </div>
+                <p class="imageCount">0/5</p>
+            </div>
+            
+            <!--<input type="file" class="usageImage" accept="image/*" required multiple>
+            <ul class="imagePreview">
+                <p class="imageCount">0/5</p>
+            </ul>-->
             <div class="registerButtonContainer">
                 <button id="registerUsage">Register</button>
-                <button id="mintTokensButton">토큰 발행하기</button>
             </div>
         </div>
     </div>

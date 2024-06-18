@@ -187,30 +187,28 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
         document.getElementById('fundraiserDetails').innerHTML = '<p>Error fetching fundraiser details.</p>';
         animation.endTask(); // 에러 발생 시에도 로딩 종료
     }
-
+    
+    let existingImages = []; // 기존에 업로드된 이미지를 저장하는 배열
 
     function getImageFiles(e) {
-        const uploadFiles = [];
         const files = e.currentTarget.files;
         const imagePreview = document.querySelector('.imagePreview');
-        imagePreview.innerHTML = ''; // 기존 미리보기 초기화
-
-        if ([...files].length >= 6) {
+        
+        // 새로 추가하려는 이미지의 개수가 기존 이미지와 합쳐서 5개를 넘는지 확인
+        if (existingImages.length + [...files].length > 5) {
             alert('이미지는 최대 5개 까지 업로드가 가능합니다.');
-            imagePreview.innerHTML = '';
             return;
         }
 
-        // 파일 타입 검사
+        // 파일 타입 검사 및 업로드
         [...files].forEach(file => {
             if (!file.type.match("image/.*")) {
                 alert('이미지 파일만 업로드가 가능합니다.');
                 return;
             }
 
-            // 파일 갯수 검사
-            if ([...files].length < 6) {
-                uploadFiles.push(file);
+            if (existingImages.length < 5) {
+                existingImages.push(file);
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const preview = createElement(e, file);
@@ -219,22 +217,38 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
                 reader.readAsDataURL(file);
             }
         });
+
+        // 등록된 이미지 개수 표시
+        const imageCount = document.querySelector('.imageCount');
+        imageCount.textContent = `${existingImages.length}/5`;
     }
 
     function createElement(e, file) {
         const li = document.createElement('li');
+        li.classList.add('imagePreviewItem');
+
         const img = document.createElement('img');
         img.setAttribute('src', e.target.result);
         img.setAttribute('data-file', file.name);
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('closeButton');
+        closeButton.addEventListener('click', () => {
+            li.remove();
+            existingImages = existingImages.filter(f => f.name !== file.name);
+            const imageCount = document.querySelector('.imageCount');
+            imageCount.textContent = `${existingImages.length}/5`;
+        });
+
         li.appendChild(img);
+        li.appendChild(closeButton);
 
         return li;
     }
 
     // 파일 선택 시 이미지 미리보기 생성
-    document.querySelector('.imageUpload').addEventListener('change', getImageFiles);
+    document.querySelector('.usageImage').addEventListener('change', getImageFiles);
 
-    // Register 버튼 클릭 시 서버로 이미지 업로드
     document.getElementById('registerUsage').addEventListener('click', async function(event) {
         animation.startTask();
         event.preventDefault();
@@ -243,19 +257,24 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
         const text = textarea.value;
 
         if (text.length <= 1000) {
+            // 글자 수 검사 통과
         } else {
             alert('글자 수가 1000자를 초과할 수 없습니다.');
             return;
         }
 
-        const fileInput = document.querySelector('.imageUpload');
+        const fileInput = document.querySelector('.usageImage');
 
         const formData = new FormData();
         const textBlob = new Blob([text], { type: 'text/plain' });
-        formData.append('file', textBlob, 'usageDescription.txt'); 
+        formData.append('file', textBlob, 'usageDescription.txt');
 
+        [...fileInput.files].forEach(file => {
+            formData.append(`file`, file);
+        });
 
-        [...fileInput.files].forEach(file => formData.append('file', file));
+        // FormData의 모든 항목을 출력하여 확인
+        console.log(formData);
 
         try {
             const response = await fetch('/upload', {
@@ -268,14 +287,14 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
             result.forEach(data => {
                 console.log(data.IpfsHash);
                 IpfsHashes.push(data.IpfsHash);
-            })
+            });
 
             // interact w/ contract instance
             const contract = new ethers.Contract(IpfsContractAddress, IpfsContractABI, signer);
 
             console.log(await storeData(contract, contractAddress, IpfsHashes));
 
-            // console.log(await getData(contract, contractAddress));
+            console.log(await getData(contract, contractAddress));
         } catch (error) {
             console.error('Error uploading file:', error);
             alert("Error uploading file");
@@ -283,7 +302,6 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
 
         animation.endTask();
     });
-
 }
 
 
