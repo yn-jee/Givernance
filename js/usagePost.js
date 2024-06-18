@@ -1,11 +1,7 @@
 import { LoadingAnimation } from './LoadingAnimation.js';
 import { minidenticonSvg } from 'https://cdn.jsdelivr.net/npm/minidenticons@4.2.1/minidenticons.min.js';
 import { fundraiserFactoryAddress, fundraiserFactoryABI, fundraiserABI } from './contractConfig.js';
-//import { uploadTextToIPFS, downloadTextFromIPFS } from './ipfs.js';
-// import { createHeliaHTTP } from "@helia/http";
-// import { unixfs } from "@helia/unixfs";
 import { deployGiversToken, deployGiver, GiversTokenABI, GiversTokenBytecode, GiverABI, GiverBytecode } from "./tokenDeploy.js";
-
 
 const animation = new LoadingAnimation('../images/loadingAnimation.json');
 await animation.loadAnimation();
@@ -13,25 +9,27 @@ await animation.loadAnimation();
 const urlParams = new URLSearchParams(window.location.search);
 const contractAddress = urlParams.get('contractAddress'); // 'contractAddress' 파라미터의 값 가져오기
 
+
 // 이더리움 프로바이더 초기화
 async function initializeProvider() {
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    const connectedAddress = accounts[0];
+    // 연결된 메타마스크 주소
+    const connectedAddress = accounts[0]; 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     return { provider, connectedAddress };
 }
 
-// 이벤트 가져오기
 async function getEvents(provider, fundraiserFactoryAddress) {
     const fundraiserFactory = new ethers.Contract(fundraiserFactoryAddress, fundraiserFactoryABI, provider);
+
     const fromBlock = 0;
     const toBlock = 'latest';
     const events = await fundraiserFactory.queryFilter(fundraiserFactory.filters.FundraiserCreated(), fromBlock, toBlock);
     return events;
 }
 
-// 후원자 주소 가져오기
+
 async function getFundraiserCreatorAddresses(provider, events, _fundraiserAddress) {
     for (let event of events) {
         const txHash = event.transactionHash;
@@ -48,6 +46,7 @@ function trimAddress(address) {
 }
 
 function copyToClipboard(text) {
+    // navigator.clipboard 지원 여부 확인
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
             alert('Address copied to clipboard!');
@@ -55,8 +54,10 @@ function copyToClipboard(text) {
             console.error('Error copying text to clipboard: ', err);
         });
     } else {
+
         const textArea = document.createElement("textarea");
         textArea.value = text;
+        // 화면 밖으로
         textArea.style.position = "fixed";
         textArea.style.left = "-999999px";
         document.body.appendChild(textArea);
@@ -73,7 +74,7 @@ function copyToClipboard(text) {
     }
 }
 
-// 생성된 블록 번호 가져오기
+// 트랜잭션 해시를 이용하여 생성된 블록 번호를 가져오는 함수
 async function getContractCreationBlock(provider, events, _fundraiserAddress) {
     for (let event of events) {
         const txHash = event.transactionHash;
@@ -195,99 +196,92 @@ async function fetchAndDisplayFundraiserDetails(provider, connectedAddress, addr
     }
 }
 
-// document.getElementById('registerUsage').addEventListener('click', async () => {
-//     console.log('button clicked');
-//     const usageDescription = document.getElementById('usageDescription').value;
-    
-//     if (!usageDescription) {
-//         alert('Please enter a description.');
-//         return;
-//     }
+function getImageFiles(e) {
+    const uploadFiles = [];
+    const files = e.currentTarget.files;
+    const imagePreview = document.querySelector('.imagePreview');
+    imagePreview.innerHTML = ''; // 기존 미리보기 초기화
 
-//     const jsonContent = {
-//         description: usageDescription
-//     };
+    if ([...files].length > 5) {
+        alert('이미지는 최대 5개까지 업로드가 가능합니다.');
+        return;
+    }
 
-//     const jsonString = JSON.stringify(jsonContent);
+    // 파일 타입 및 크기 검사
+    [...files].forEach(file => {
+        if (!file.type.match("image/.*")) {
+            alert('이미지 파일만 업로드가 가능합니다.');
+            return;
+        }
 
-//     // IPFS에 JSON 파일 업로드
-//     const ipfsPath = await uploadTextToIPFS(jsonString);
-    
-//     if (ipfsPath) {
-//         alert('File successfully uploaded to IPFS. Path: ' + ipfsPath);
-//     }
-// });
-document.getElementById('registerUsage').addEventListener('click', async () => {
-    console.log('button clicked');
+        if (file.size > 10 * 1024 * 1024) {
+            alert('이미지 파일 크기는 10MB를 초과할 수 없습니다.');
+            return;
+        }
+
+        uploadFiles.push(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = createElement(e, file);
+            imagePreview.appendChild(preview);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function createElement(e, file) {
+    const li = document.createElement('li');
+    const img = document.createElement('img');
+    img.setAttribute('src', e.target.result);
+    img.setAttribute('data-file', file.name);
+    li.appendChild(img);
+
+    return li;
+}
+
+// 파일 선택 시 이미지 미리보기 생성
+document.querySelector('.imageUpload').addEventListener('change', getImageFiles);
+
+// Register 버튼 클릭 시 서버로 이미지 업로드
+document.getElementById('registerUsage').addEventListener('click', async function(event) {
+    event.preventDefault();
+    const fileInput = document.querySelector('.imageUpload');
+    const files = fileInput.files;
+
+    if (files.length === 0) {
+        alert('Please select a file');
+        return;
+    }
+
     const usageDescription = document.getElementById('usageDescription').value;
-
     if (!usageDescription) {
         alert('Please enter a description.');
         return;
     }
 
-    const jsonContent = {
-        data: usageDescription
-    };
+    const formData = new FormData();
+    formData.append('json', JSON.stringify({ description: usageDescription }));
+
+    // 파일 추가
+    [...files].forEach(file => {
+        formData.append('files', file);
+    });
 
     try {
-        const response = await fetch('/api/IPFSUpload', {
+        const response = await fetch('/upload', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonContent)
+            body: formData
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to upload file to IPFS.');
-        }
-
-        const data = await response.json();
-        console.log('Response data:', data);  // 서버 응답 데이터를 콘솔에 출력하여 확인
-        alert('File successfully uploaded to IPFS. Path: ' + data.path);
+        const result = await response.json();
+        alert("Files uploaded to IPFS with hash: " + result.IpfsHash);
     } catch (error) {
-        console.error('Error uploading to IPFS:', error);
-        alert('Failed to upload file to IPFS.');
+        console.error('Error uploading files:', error);
+        alert("Error uploading files");
     }
 });
 
 
-// 후원자 주소 목록과 후원 금액을 가져오는 함수
-async function getDonorsAndAmounts(fundraiserContract, contractAddress) {
-    const donorsAndAmounts = [];
-    const totalDonors = await fundraiserContract.donations; // donationsLength 함수 호출
-    console.log(totalDonors);
-
-    
-    return donorsAndAmounts;
-}
-
-// mintTokens 버튼 클릭 이벤트 핸들러
-async function mintTokens() {
-    try {
-        const { provider } = await initializeProvider();
-        const signer = provider.getSigner();
-        const giversTokenAddress = 'GiversToken 컨트랙트 주소'; // 실제 GiversToken 컨트랙트 주소 입력
-        const giversTokenContract = new ethers.Contract(giversTokenAddress, GiversTokenABI, signer);
-        const fundraiserContract = new ethers.Contract(contractAddress, fundraiserABI, signer);
-
-        const donorsAndAmounts = await getDonorsAndAmounts(fundraiserContract, contractAddress);
-        
-        // for (const { donorAddress, donationAmount } of donorsAndAmounts) {
-        //     // 후원 금액에 비례하여 토큰 발행
-        //     const tx = await giversTokenContract.mint(donorAddress, donationAmount);
-        //     await tx.wait();
-        // }
-        
-        // console.log('Tokens minted successfully.');
-    } catch (error) {
-        console.error('Error minting tokens:', error);
-    }
-}
-
-// mintTokens 버튼 클릭 이벤트 리스너 등록
-document.getElementById('mintTokensButton').addEventListener('click', mintTokens);
 
 // 메인 실행
 (async function() {
