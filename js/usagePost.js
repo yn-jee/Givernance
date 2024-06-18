@@ -293,8 +293,6 @@ async function fetchAndDisplayFundraiserDetails(provider, signer, connectedAddre
             const contract = new ethers.Contract(IpfsContractAddress, IpfsContractABI, signer);
 
             console.log(await storeData(contract, contractAddress, IpfsHashes));
-
-            console.log(await getData(contract, contractAddress));
         } catch (error) {
             console.error('Error uploading file:', error);
             alert("Error uploading file");

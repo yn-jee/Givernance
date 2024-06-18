@@ -24,6 +24,16 @@
 						"internalType": "string[]",
 						"name": "",
 						"type": "string[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -76,11 +86,11 @@
 	},
 	"sources": {
 		"contracts/IPFSStorage.sol": {
-			"keccak256": "0x0975b50e80f2d40d523fa1ad24dbade81543ea357c1f30fba396e3bbde3e1b68",
+			"keccak256": "0xafb103e2d0fee628633ec1f09143ee0d32d5a298ec619d3d732cfb5a12dddc27",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://23f72a36916c887bbaef3833511cf9ef35ef97c3a2c828909e6c9ae8630ed3a5",
-				"dweb:/ipfs/QmRyVrxzTmR51DH4mppCLV32E9B3TYqYeZfWSqRiXNBFvU"
+				"bzz-raw://3f489dbc04eba6c7431aeba5b9dd74c7d5c730eb9f5ae47f87a6bec55347ba29",
+				"dweb:/ipfs/QmTifvYufb9VFxHFbKGjYocjMv8Z8GaHHwgoBtVXqTuHwM"
 			]
 		}
 	},

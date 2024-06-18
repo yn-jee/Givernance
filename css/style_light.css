@@ -259,7 +259,7 @@ form {
   }
 }
 
-#fundraiserDetails {
+#fundraiserDetails, #usageDetails {
   justify-content: space-between; 
   display: flex;
   flex-direction: column; 
@@ -268,7 +268,7 @@ form {
   margin-bottom: 30px;
 }
 
-#fundraiserDetails .fundraiserTitle {
+#fundraiserDetails .fundraiserTitle, #usageDetails .fundraiserTitle {
   text-align: center;
   font-size: 40;
   font-weight: bold;
@@ -276,13 +276,22 @@ form {
   margin-top: 50px;
   margin-bottom: 50px;
 }  
-#fundraiserDetails .contractMetaData {
+#fundraiserDetails .contractMetaData, #usageDetails .contractMetaData {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-left: 30px;
   height: 40px;
 }
+
+#usageDetails .fundraisingStatus {
+  margin-top: 20px;
+}
+
+#usageDetails .supporterInfo {
+  margin-bottom: 40px;
+}
+
 
 .profile {
   display: flex;
@@ -1083,4 +1092,11 @@ form {
   border: none;
   background: url('../images/close.png') no-repeat center center;
   background-size: contain;
+}
+
+.usageImages {
+  margin-top: 30px;
+}
+.usageImage {
+  width: 80%;
 }

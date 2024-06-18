@@ -281,12 +281,28 @@ async function renderFundraisers(details, container, state) {
         const isFundraising = detail.finishTime > now;
 
         if ((state === 'fundraising' && isFundraising) || 
-            (state === 'finished' && !isFundraising && !detail.isUsageUploaded) ||
-            (state === 'usageUploaded' && detail.isUsageUploaded)) {
+            (state === 'finished' && !isFundraising && !detail.isUsageUploaded)) {
             fundraisersFound = true;
 
             const item = document.createElement('div');
             const postAddress = "post.html?contractAddress=" + detail.address;
+            item.id = 'fundraiserBox';
+            item.innerHTML = `
+            <img class="donationBox" src="images/donationBox.png" title="donationBox">
+            <h2 class="fundraiser-title">${detail.name}</h2>
+            <p class="target-amount">Target Amount is <b>${detail.targetAmount} ETH</b></p>
+            <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
+            `;
+            item.addEventListener('click', function() {
+                window.location.href = postAddress;
+            });
+            container.appendChild(item);
+        }
+        else if (state === 'usageUploaded' && detail.isUsageUploaded) {
+            fundraisersFound = true;
+
+            const item = document.createElement('div');
+            const postAddress = "usageUploadedPost.html?contractAddress=" + detail.address;
             item.id = 'fundraiserBox';
             item.innerHTML = `
             <img class="donationBox" src="images/donationBox.png" title="donationBox">

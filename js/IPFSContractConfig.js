@@ -1,4 +1,4 @@
-const IpfsContractAddress = "0x53E87482c5e7E479868D6BA636f2D1E36b994499";
+const IpfsContractAddress = "0xf100864db627a2be977e9ce3199236da2e4ec3d4";
 const IpfsContractABI = [
 	{
 		"inputs": [
@@ -37,6 +37,16 @@ const IpfsContractABI = [
 				"internalType": "string[]",
 				"name": "",
 				"type": "string[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -57,13 +67,14 @@ async function storeData(contract, targetContractAddress, ipfsHashes) {
 
 async function getData(contract, targetContractAddress) {
     try {
-        const [storedTargetContractAddress, hashes] = await contract.getData(targetContractAddress);
-        console.log('Target contract address:', storedTargetContractAddress);
-        console.log('IPFS hashes:', hashes);
-        return { storedTargetContractAddress, hashes };
+        console.log('Target contract address input:', targetContractAddress); 
+        const data = await contract.getData(targetContractAddress);
+        const [storedTargetContractAddress, hashes, timestamp, blockNumber] = data;
+        return { storedTargetContractAddress, hashes, timestamp, blockNumber };
     } catch (error) {
         console.error('Error getting data:', error);
     }
 }
+
 
 export { IpfsContractAddress, IpfsContractABI, storeData, getData };
