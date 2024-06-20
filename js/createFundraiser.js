@@ -30,7 +30,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         // FundraiserCreated 이벤트 리스너
         fundraiserFactory.on("FundraiserCreated", (fundraiserAddress) => {
             console.log(`New Fundraiser Created at: ${fundraiserAddress}`);
-            alert(`New Fundraiser Created at: ${fundraiserAddress}`);
+            alert(`New Fundraiser Created at: ${fundraiserAddress}`);         
+            window.location.href = window.location.protocol + "//" + window.location.host + "/post.html?contractAddress=" + fundraiserAddress;
+
         });
 
 
@@ -87,11 +89,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const transactionResponse = await fundraiserFactory.createFundraiser(
                     name, targetAmount, finishTimeUnix, description, items
                 );
-                const receipt = await transactionResponse.wait();
+                await transactionResponse.wait();
                 console.log('Fundraiser created:', transactionResponse);
                 alert('Fundraiser has been registered successfully!');
-                const contractAddress = receipt.contractAddress;
-                window.location.href = window.location.protocol + "//" + window.location.host + "/post.html?contractAddress=" + contractAddress;
             } catch (error) {
                 console.error('Failed to register fundraiser:', error);
                 alert('모금함이 생성되지 않았습니다.', error);
