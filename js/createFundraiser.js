@@ -38,9 +38,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             animation.startTask(); // 로딩 시작
             const name = document.getElementById('fundraiserName').value;
             const targetAmountInput = document.getElementById('fundraiserTargetAmount').value;
+            let targetAmount; // 변수를 블록 밖으로 이동
+
             if (targetAmountInput) {
-                const targetAmount = ethers.utils.parseUnits(targetAmountInput, 'gwei');
-                console.log('Target Amount (Ether):', targetAmount);
+                targetAmount = ethers.utils.parseUnits(targetAmountInput, 'gwei');
+                console.log('Target Amount (wei):', targetAmount.toString());
             }
             const finishTimeElement = document.getElementById('fundraiserFinishTime');
             finishTimeElement.min = getCurrentDateTime();
@@ -85,9 +87,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const transactionResponse = await fundraiserFactory.createFundraiser(
                     name, targetAmount, finishTimeUnix, description, items
                 );
-                await transactionResponse.wait();
+                const receipt = await transactionResponse.wait();
                 console.log('Fundraiser created:', transactionResponse);
                 alert('Fundraiser has been registered successfully!');
+                const contractAddress = receipt.contractAddress;
+                window.location.href = window.location.protocol + "//" + window.location.host + "/post.html?contractAddress=" + contractAddress;
             } catch (error) {
                 console.error('Failed to register fundraiser:', error);
                 alert('모금함이 생성되지 않았습니다.', error);
