@@ -18,9 +18,18 @@
         </div>    
     </div>
     <h2 id="usagePostHeader">후원금 사용 내역</h2>
-    
+    <details id="fundraiserDetailsContainer">
+        <summary id="fundraiserDetailsContainerSummary">모금함 상세 정보</summary>
+        <div class="mainContent">
+            <div class="mainFeed"></div>
+            <div id="fundraiserDetails"></div>
+        </div>
+    </details>
     <div class="mainContent">
         <div id="usageDetails"></div>
+        <div class="registerButtonContainer">
+            <button id="withdrawButton">이 버튼은 투표 버튼으로 바꿔야함</button>
+        </div>
     </div>
     <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.5); align-items: center; justify-content: center; z-index: 1000;">
         <div id="loadingAnimation" style="width: 20%;"></div>

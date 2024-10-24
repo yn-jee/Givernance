@@ -28,3 +28,5 @@ contract IPFSStorage {
         return (data.targetContractAddress, data.hashes, data.timestamp, data.blockNumber);
     }
 }
+
+

@@ -1,31 +1,53 @@
-import { GiversTokenABI, GiversTokenBytecode, GiverABI, GiverBytecode } from "./tokenConfig.js";
+import {
+  GiversTokenABI,
+  GiversTokenBytecode,
+  GovernanceABI,
+  GovernanceBytecode,
+} from "./tokenConfig.js";
 
-// async function deployGiversToken(initialOwner) {
-//     const GiversTokenFactory = new ethers.ContractFactory(GiversTokenABI, GiversTokenBytecode, wallet);
-//     const giversToken = await GiversTokenFactory.deploy(initialOwner);
-//     await giversToken.deployed();
-//     console.log("GiversToken deployed at:", giversToken.address);
-//     return giversToken.address;
-// }
+// GiversToken을 배포하는 함수
+// GiversToken을 배포하는 함수
+export async function deployGiversToken() {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정
+    const signer = provider.getSigner(); // 트랜잭션 서명자를 지갑에서 가져옴
 
+    // GiversToken 배포 (인자 없이 배포)
+    const GiversTokenFactory = new ethers.ContractFactory(
+      GiversTokenABI,
+      GiversTokenBytecode,
+      signer
+    );
+    const giversToken = await GiversTokenFactory.deploy();
+    await giversToken.deployed(); // 배포 완료 대기
 
-async function deployGiversToken(initialOwner) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const GiversTokenFactory = new ethers.ContractFactory(GiversTokenABI, GiversTokenBytecode, signer);
-    const giversToken = await GiversTokenFactory.deploy(initialOwner);
-    await giversToken.deployed();
-    console.log("GiversToken deployed at:", giversToken.address);
-    return giversToken.address;
+    console.log("GiversToken이 배포된 주소:", giversToken.address);
+    return giversToken.address; // 배포된 GiversToken의 주소 반환
+  } catch (error) {
+    console.error("GiversToken 배포 중 오류:", error);
+    throw error;
+  }
 }
 
+// Governance 계약을 배포하는 함수
+export async function deployGovernance(giversTokenAddress) {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정
+    const signer = provider.getSigner(); // 트랜잭션 서명자를 지갑에서 가져옴
 
-async function deployGiver(tokenAddress, timelockAddress) {
-    const GiverFactory = new ethers.ContractFactory(GiverABI, GiverBytecode, wallet);
-    const giver = await GiverFactory.deploy(tokenAddress, timelockAddress);
-    await giver.deployed();
-    console.log("Giver deployed at:", giver.address);
-    return giver.address;
+    // Governance 계약 배포, GiversToken 주소와 연동
+    const GovernanceFactory = new ethers.ContractFactory(
+      GovernanceABI,
+      GovernanceBytecode,
+      signer
+    );
+    const governance = await GovernanceFactory.deploy(giversTokenAddress); // GiversToken과 연동된 Governance 계약 배포
+    await governance.deployed(); // 배포 완료 대기
+
+    console.log("Governance 계약이 배포된 주소:", governance.address);
+    return governance.address; // 배포된 Governance 계약의 주소 반환
+  } catch (error) {
+    console.error("Governance 계약 배포 중 오류:", error);
+    throw error;
+  }
 }
-
-export { deployGiversToken, deployGiver, GiversTokenABI, GiversTokenBytecode, GiverABI, GiverBytecode };

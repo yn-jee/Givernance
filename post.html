@@ -4,7 +4,6 @@
   <title>Givernance</title>
   <link rel="stylesheet" type="text/css" href="css/style_light.css">
   <meta charset="UTF-8">
-  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
   <link rel="icon" href="images/tinyDoveLogo.png"/>
   <link rel="apple-touch-icon" href="images/tinyDoveLogo.png"/> 
 </head>
@@ -25,6 +24,7 @@
   <div id="fundraiserDetails"></div>
   <div class="donateButtonContainer">
       <button id="donateModalOpenButton">후원하기</button>
+      <button id="withdrawButton" style="display: none;">출금하기</button>
       <button id="uploadUsageButton">후원금 사용 내역 등록하기</button>
   </div>
 </div>
@@ -39,7 +39,9 @@
                 <span class="unit">gwei</span>
             </div>
         </div>
-        <button class="donateButton">후원하기</button>
+        <div class="registerButtonContainer">
+          <button class="donateButton">후원하기</button>
+        </div>
     </div>
 </div>
 
