@@ -676,6 +676,10 @@ form {
   background: none;
 }
 
+#fundraiserDescriptionTitle.fundraiserInputTitle {
+  padding-left: 100px;
+}
+
 #fundraiserName,
 #fundraiserFinishTime {
   width: 100%;

@@ -122,7 +122,7 @@ async function getBlockTimestamp(provider, blockNumber) {
 }
 
 // 출금하기
-async function withdrawFunds(contractAddress, factoryAddress) {
+async function withdrawFunds(contractAddress, factoryAddress, contractOwner) {
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(); // 서명자를 가져옴 (함수를 호출하는 계정)
@@ -136,18 +136,14 @@ async function withdrawFunds(contractAddress, factoryAddress) {
 
     // 현재 로그인한 계정 주소와 컨트랙트 소유자 주소 확인
     const currentAddress = await signer.getAddress();
+    console.log("호출자:", currentAddress);
 
     const events = await getEvents(provider, factoryAddress);
-    const ownerAddress = await getFundraiserCreatorAddresses(
-      provider,
-      events,
-      contractAddress
-    );
+    console.log(events[0]);
 
-    console.log("호출자:", currentAddress);
-    console.log("생성자:", ownerAddress);
+    console.log("생성자:", contractOwner);
 
-    if (currentAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
+    if (currentAddress.toLowerCase() !== contractOwner.toLowerCase()) {
       throw new Error("Only the contract owner can withdraw funds.");
     }
 
@@ -162,6 +158,23 @@ async function withdrawFunds(contractAddress, factoryAddress) {
     console.error("Withdraw function failed:", error);
     alert(error.message); // 에러 메시지를 사용자에게 표시
   }
+}
+
+async function getWithdrawEvents(contractAddress, provider) {
+  const fundraiser = new ethers.Contract(
+    contractAddress,
+    fundraiserABI,
+    provider
+  );
+
+  const fromBlock = 0;
+  const toBlock = "latest";
+  const events = await fundraiser.queryFilter(
+    fundraiser.filters.Withdraw(),
+    fromBlock,
+    toBlock
+  );
+  return events;
 }
 
 // 이미지 데이터 표시하기
@@ -229,29 +242,29 @@ async function fetchAndDisplayFundraiserDetails(
 
     var raisedAmount;
 
-    // const lastTx = await getFundraiserLastEvent(
-    //   provider,
-    //   events,
-    //   address,
-    //   contractOwner
-    // );
+    const withdrawEvents = await getWithdrawEvents(contractAddress, provider);
+    console.log("기록들", withdrawEvents);
+    withdrawEvents.forEach((event) => {
+      console.log(`Creator: ${event.args.creator}`);
+      console.log(
+        `Amount Withdrawn: ${ethers.utils.formatEther(event.args.amount)} ETH`
+      );
+      console.log(`Block Number: ${event.blockNumber}`);
+      console.log(`Transaction Hash: ${event.transactionHash}`);
+      console.log("------------------------------------");
+    });
 
-    // console.log("TX:", lastTx);
-    // if (lastTx == false) {
-    //   raisedAmount = ethers.utils.formatUnits(
-    //     await contract.raisedAmount(),
-    //     "gwei"
-    //   );
-    // } else {
-    //   raisedAmount = ethers.utils.formatUnits(lastTx, "gwei");
-    // }
-
-    /* 
-    
-    출금하는 함수를 호출할 때 그 출금 기록을 저장하는 새 ipfs 컨트랙트를 호출해서 정보를 저장해야됨
-    
-    
-    */
+    if (withdrawEvents.length > 0) {
+      raisedAmount = ethers.utils.formatUnits(
+        withdrawEvents[0].args.amount,
+        "gwei"
+      );
+    } else {
+      raisedAmount = ethers.utils.formatUnits(
+        await contract.raisedAmount(),
+        "gwei"
+      );
+    }
 
     // 생성된 시간 가져오기
     const blockNumber = await getContractCreationBlock(
@@ -505,34 +518,43 @@ async function fetchAndDisplayFundraiserDetails(
         //   });
         // }
 
-        if (usageData.hashes.length > 0) {
-          document.querySelector("#donateModalOpenButton").disabled = true;
-          document.querySelector("#donateModalOpenButton").textContent =
-            "이미 사용 내역이 등록된 모금함입니다.";
-          document.querySelector("#donateModalOpenButton").style =
-            "background: #e0e0e0; color: white; width: auto; padding: 0px 15px; text-align: center;";
-        } else {
-          // 후원 버튼 숨기기
-          document.querySelector("#donateModalOpenButton").style =
-            "display: none;";
-          // 사용 내역 등록 버튼 보이기
-          document.querySelector("#uploadUsageButton").style =
-            "display: block;";
-
-          const uploadUsageAddress =
-            "usagePost.html?contractAddress=" + contractAddress;
-          document
-            .querySelector("#uploadUsageButton")
-            .addEventListener("click", function () {
-              window.location.href = uploadUsageAddress;
-            });
-
+        if (withdrawEvents.length == 0) {
           const withdrawButton = document.getElementById("withdrawButton");
           withdrawButton.style.display = "block";
 
           withdrawButton.addEventListener("click", async function () {
-            await withdrawFunds(contractAddress, factoryAddress);
+            await withdrawFunds(contractAddress, factoryAddress, contractOwner);
           });
+          document.querySelector("#uploadUsageButton").style = "display: none;";
+          document.querySelector("#uploadUsageButton").disabled = true;
+          document.querySelector("#donateModalOpenButton").disabled = true;
+          document.querySelector("#donateModalOpenButton").style =
+            "display: none;";
+        } else {
+          if (usageData.hashes.length > 0) {
+            document.getElementById("withdrawButton").display = "none";
+            document.getElementById("withdrawButton").disabled = true;
+            document.querySelector("#donateModalOpenButton").disabled = true;
+            document.querySelector("#donateModalOpenButton").textContent =
+              "이미 사용 내역이 등록된 모금함입니다.";
+            document.querySelector("#donateModalOpenButton").style =
+              "background: #e0e0e0; color: white; width: auto; padding: 0px 15px; text-align: center;";
+          } else {
+            // 후원 버튼 숨기기
+            document.querySelector("#donateModalOpenButton").style =
+              "display: none;";
+            // 사용 내역 등록 버튼 보이기
+            document.querySelector("#uploadUsageButton").style =
+              "display: block;";
+
+            const uploadUsageAddress =
+              "usagePost.html?contractAddress=" + contractAddress;
+            document
+              .querySelector("#uploadUsageButton")
+              .addEventListener("click", function () {
+                window.location.href = uploadUsageAddress;
+              });
+          }
         }
       } else {
         document.querySelector("#donateModalOpenButton").disabled = true;
@@ -580,7 +602,10 @@ async function fetchAndDisplayFundraiserDetails(
           "gwei"
         );
 
-        const tx = await signedContract.donate({
+        // false: 모금함 생성자가 아님.
+        // true: 모금함 생성자임.
+        // 후원하려는 계정에 연결된 지갑 중, 생성자의 지갑이 있다면 true를 전달
+        const tx = await signedContract.donate(false, {
           value: ethers.utils.parseEther(donateAmountEther), // 기부 금액 (Ether)
           gasLimit: 300000,
         });

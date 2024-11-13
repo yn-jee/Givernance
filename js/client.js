@@ -108,10 +108,24 @@ async function fetchAllFundraiserDetails(fundraiserAddresses, provider) {
     fundraiserAddresses.map(async (address) => {
       const contract = new ethers.Contract(address, fundraiserABI, provider);
       const name = await contract.name();
-      const targetAmount = ethers.utils.formatUnits(
+      let targetAmountGwei = ethers.utils.formatUnits(
         await contract.targetAmount(),
         "gwei"
       );
+
+      // 소수점을 제거하고 문자열을 숫자로 변환
+      targetAmountGwei = Math.floor(parseFloat(targetAmountGwei));
+
+      // 목표 금액이 1천만 Gwei 이상일 경우 ETH로 변환
+      let targetAmount;
+      if (targetAmountGwei >= 10000000) {
+        targetAmount = `${ethers.utils.formatEther(
+          ethers.utils.parseUnits(targetAmountGwei.toString(), "gwei")
+        )} ETH`;
+      } else {
+        targetAmount = `${targetAmountGwei} GWEI`;
+      }
+
       const finishTime = new Date(
         (await contract.finishTime()).toNumber() * 1000
       );
@@ -223,10 +237,16 @@ async function renderFundraisers(details, container, state) {
       const item = document.createElement("div");
       const postAddress = "post.html?contractAddress=" + detail.address;
       item.id = "fundraiserBox";
+
+      if (detail.name.length >= 15) {
+        item.classList.add("tightSpacing");
+        console.log("long title", detail.name);
+      }
+
       item.innerHTML = `
             <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
             <h2 class="fundraiser-title">${detail.name}</h2>
-            <p class="target-amount">Target Amount is <b>${detail.targetAmount} GWEI</b></p>
+            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
             <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
             `;
       item.addEventListener("click", function () {
@@ -243,7 +263,7 @@ async function renderFundraisers(details, container, state) {
       item.innerHTML = `
             <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
             <h2 class="fundraiser-title">${detail.name}</h2>
-            <p class="target-amount">Target Amount is <b>${detail.targetAmount} GWEI</b></p>
+            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
             <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
             `;
       item.addEventListener("click", function () {

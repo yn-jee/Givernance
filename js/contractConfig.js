@@ -1,4 +1,4 @@
-const fundraiserFactoryAddress = "0x022612e6fc68375a62977a292a750bd14d9db725";
+const fundraiserFactoryAddress = "0x6a7a3e5cb3902b6c952a3565eeb4aab2bb3752fb";
 const fundraiserFactoryABI = [
   {
     inputs: [
@@ -128,7 +128,32 @@ const fundraiserABI = [
     type: "constructor",
   },
   {
-    inputs: [],
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "creator",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "Withdraw",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "isCreator",
+        type: "bool",
+      },
+    ],
     name: "donate",
     outputs: [],
     stateMutability: "payable",
@@ -154,6 +179,25 @@ const fundraiserABI = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "donors",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "factoryAddress",
     outputs: [
@@ -161,6 +205,19 @@ const fundraiserABI = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "finalRaisedAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -187,6 +244,19 @@ const fundraiserABI = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDonors",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -239,6 +309,32 @@ const fundraiserABI = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "hasWithdrawn",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isWithdrawn",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",

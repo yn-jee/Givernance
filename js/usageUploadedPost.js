@@ -6,7 +6,11 @@ import {
   fundraiserFactoryABI,
   fundraiserABI,
 } from "./contractConfig.js";
-import { deployGiversToken, deployGovernance } from "./tokenDeploy.js";
+import {
+  createGovernanceToken,
+  castVote,
+  getVotingResults,
+} from "./governanceFunctions.js";
 import {
   fundraiserInfoContract,
   usageRecordContract,
@@ -130,10 +134,21 @@ async function fetchIpfsData(ipfsHash, isText) {
   }
 }
 
-async function getRaisedAmount(ipfsHash) {
-  const response = await fetch(`${ipfsBaseUrl}${ipfsHash}`);
-  const textData = await response.json();
-  return textData;
+async function getWithdrawEvents(contractAddress, provider) {
+  const fundraiser = new ethers.Contract(
+    contractAddress,
+    fundraiserABI,
+    provider
+  );
+
+  const fromBlock = 0;
+  const toBlock = "latest";
+  const events = await fundraiser.queryFilter(
+    fundraiser.filters.Withdraw(),
+    fromBlock,
+    toBlock
+  );
+  return events;
 }
 
 function displayTextData() {
@@ -249,11 +264,36 @@ async function fetchAndDisplayFundraiserDetails(
       minute: "numeric",
       hour12: true,
     });
-    const raisedAmount = ethers.utils.formatUnits(
-      await contract.raisedAmount(),
-      "gwei"
-    );
+    // const raisedAmount = ethers.utils.formatUnits(
+    //   await contract.raisedAmount(),
+    //   "gwei"
+    // );
 
+    var raisedAmount;
+
+    const withdrawEvents = await getWithdrawEvents(contractAddress, provider);
+    console.log("기록들", withdrawEvents);
+    withdrawEvents.forEach((event) => {
+      console.log(`Creator: ${event.args.creator}`);
+      console.log(
+        `Amount Withdrawn: ${ethers.utils.formatEther(event.args.amount)} ETH`
+      );
+      console.log(`Block Number: ${event.blockNumber}`);
+      console.log(`Transaction Hash: ${event.transactionHash}`);
+      console.log("------------------------------------");
+    });
+
+    if (withdrawEvents.length > 0) {
+      raisedAmount = ethers.utils.formatUnits(
+        withdrawEvents[0].args.amount,
+        "gwei"
+      );
+    } else {
+      raisedAmount = ethers.utils.formatUnits(
+        await contract.raisedAmount(),
+        "gwei"
+      );
+    }
     // const options = {
     //   method: "GET",
     //   headers: {
@@ -484,10 +524,31 @@ async function fetchAndDisplayUsageDetails(
     //   await contract.raisedAmount(),
     //   "gwei"
     // );
+    var raisedAmount;
 
-    // 게시된 데이터 가져오기
-    // 첫 번째 데이터는 description, 마지막 데이터는 최종 후원금
-    const raisedAmount = getRaisedAmount(data.hashes.length - 1);
+    const withdrawEvents = await getWithdrawEvents(contractAddress, provider);
+    console.log("기록들", withdrawEvents);
+    withdrawEvents.forEach((event) => {
+      console.log(`Creator: ${event.args.creator}`);
+      console.log(
+        `Amount Withdrawn: ${ethers.utils.formatEther(event.args.amount)} ETH`
+      );
+      console.log(`Block Number: ${event.blockNumber}`);
+      console.log(`Transaction Hash: ${event.transactionHash}`);
+      console.log("------------------------------------");
+    });
+
+    if (withdrawEvents.length > 0) {
+      raisedAmount = ethers.utils.formatUnits(
+        withdrawEvents[0].args.amount,
+        "gwei"
+      );
+    } else {
+      raisedAmount = ethers.utils.formatUnits(
+        await contract.raisedAmount(),
+        "gwei"
+      );
+    }
 
     for (let i = 0; i < data.hashes.length - 1; i++) {
       await fetchIpfsData(data.hashes[i], i === 0);
