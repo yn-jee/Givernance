@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.25+commit.b61c2a91"
+		"version": "0.8.26+commit.8a97fa7a"
 	},
 	"language": "Solidity",
 	"output": {
@@ -24,50 +24,40 @@
 					},
 					{
 						"internalType": "string",
-						"name": "_description",
+						"name": "_fundraiserType",
 						"type": "string"
-					},
-					{
-						"components": [
-							{
-								"internalType": "string",
-								"name": "name",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "quantity",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "price",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct FundraisingLib.Item[]",
-						"name": "_items",
-						"type": "tuple[]"
 					}
 				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
 			{
-				"inputs": [],
-				"name": "description",
-				"outputs": [
+				"anonymous": false,
+				"inputs": [
 					{
-						"internalType": "string",
-						"name": "",
-						"type": "string"
+						"indexed": true,
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
 					}
 				],
-				"stateMutability": "view",
-				"type": "function"
+				"name": "Withdraw",
+				"type": "event"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "bool",
+						"name": "isCreator",
+						"type": "bool"
+					}
+				],
 				"name": "donate",
 				"outputs": [],
 				"stateMutability": "payable",
@@ -93,6 +83,51 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "donors",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "factoryAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "finalRaisedAmount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "finishTime",
 				"outputs": [
@@ -100,6 +135,65 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "fundraiserType",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getDonors",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFundraiserDetails",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -125,65 +219,26 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "index",
-						"type": "uint256"
-					}
-				],
-				"name": "getItem",
+				"inputs": [],
+				"name": "hasWithdrawn",
 				"outputs": [
 					{
-						"components": [
-							{
-								"internalType": "string",
-								"name": "name",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "quantity",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "price",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct FundraisingLib.Item",
+						"internalType": "bool",
 						"name": "",
-						"type": "tuple"
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"name": "items",
+				"inputs": [],
+				"name": "isWithdrawn",
 				"outputs": [
 					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "quantity",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "price",
-						"type": "uint256"
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -197,19 +252,6 @@
 						"internalType": "string",
 						"name": "",
 						"type": "string"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "owner",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -262,7 +304,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/contracts/Fundraiser.sol": "Fundraiser"
+			"contracts/Fundraiser.sol": "Fundraiser"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -276,20 +318,20 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/contracts/Fundraiser.sol": {
-			"keccak256": "0xec47cc414e4dad683bf480f6f0c86f2db7bac202e0c10390f0c49da019feb8cb",
+		"contracts/Fundraiser.sol": {
+			"keccak256": "0x30cfc344464bb6c53816bd33bca3120cd3ecacb852c625dc3f14938455d0fab2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3ac69799822be95452e5fea34aa578362263ad860a4715e07fc40b512cc966bd",
-				"dweb:/ipfs/QmSNcnK62jtD9P7gQWDujeooKarCaKvQqb6EFDBfNvyqos"
+				"bzz-raw://7ca3249e7124b865f71bc3a3977707f147e96df4870842249888710db80b4194",
+				"dweb:/ipfs/QmRk7y6ggkoGCDdPizcEFogAKdfGB4CMd4XtsCgQgYkbiH"
 			]
 		},
-		"contracts/contracts/FundraisingLib.sol": {
-			"keccak256": "0x2d08d50edde07359a1f2aa66abc69243dc6eb2fc8e57ceb7ff18acf614123ff4",
+		"contracts/FundraiserFactory.sol": {
+			"keccak256": "0xf2f991ac20631dfd7cf7cbb3801554e3a6883531995fcf6f65a3e5c0446faa4c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5c9213754e4d9a3c8f07af15a46234017e139a49d8752adb9c4769776765894e",
-				"dweb:/ipfs/QmUN26RKbSJZsDDnEwiejMeduf1nUrNYE8KBDTV3t9gQ2h"
+				"bzz-raw://d5464b30e00e003ce463cae87fcc3e891ae05e7fbdfd558e4c8c0b8b5ca8e71b",
+				"dweb:/ipfs/QmaBDSnkwJMXMxwYY7G5CzK3EejFnxbPgrZ3MjDpgRduz3"
 			]
 		}
 	},
