@@ -594,6 +594,30 @@ async function fetchAndDisplayUsageDetails(
     displayTextData();
     displayImageData();
 
+    document
+      .getElementById("voteForButton")
+      .addEventListener("click", async function () {
+        // 투표하기
+        // 찬성
+        console.log(contractAddress);
+        castVote(contractAddress, true);
+      });
+    document
+      .getElementById("voteAgainstButton")
+      .addEventListener("click", async function () {
+        // 반대
+        castVote(contractAddress, false);
+      });
+    document
+      .getElementById("getVotingResultsButton")
+      .addEventListener("click", async function () {
+        getVotingResults(contractAddress);
+      });
+    // document // 여기서부터. 주소 기록이 받아와지는지 확인하기... 토큰컨트랙트 자체가
+    //   .getElementById("getGovernanceAddressButton")
+    //   .addEventListener("click", async function () {
+    //     getVotingResults(contractAddress);
+    //   });
     animation.endTask();
   } catch (error) {
     console.error("Error fetching contract details:", error);

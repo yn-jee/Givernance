@@ -124,6 +124,7 @@ async function getBlockTimestamp(provider, blockNumber) {
 // 출금하기
 async function withdrawFunds(contractAddress, factoryAddress, contractOwner) {
   try {
+    animation.startTask();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(); // 서명자를 가져옴 (함수를 호출하는 계정)
 
@@ -154,6 +155,8 @@ async function withdrawFunds(contractAddress, factoryAddress, contractOwner) {
     // 트랜잭션이 완료될 때까지 기다림
     const receipt = await tx.wait();
     console.log("Withdraw transaction mined:", receipt);
+    animation.endTask();
+    location.reload();
   } catch (error) {
     console.error("Withdraw function failed:", error);
     alert(error.message); // 에러 메시지를 사용자에게 표시

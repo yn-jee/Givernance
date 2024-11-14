@@ -43,6 +43,16 @@ function getImageFiles(e) {
   const files = e.currentTarget.files;
   const imagePreview = document.querySelector(".imagePreview");
 
+  if (existingImages.length + [...files].length == 0) {
+    const file = "images/donationBox.png";
+    existingImages.push(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const preview = createElement(e, file);
+      imagePreview.appendChild(preview);
+    };
+    reader.readAsDataURL(file);
+  }
   // 새로 추가하려는 이미지의 개수가 기존 이미지와 합쳐서 5개를 넘는지 확인
   if (existingImages.length + [...files].length > 5) {
     alert("이미지는 최대 5개 까지 업로드가 가능합니다.");

@@ -565,21 +565,14 @@ async function fetchAndDisplayFundraiserDetails(
 
         // Deploy GiversToken
         // 토큰을 생성할 모금함 주소, 투표 기간(분)
-        createGovernanceToken(contractAddress, 5);
+        createGovernanceToken(contractAddress, 6);
 
-        // const initialOwner = await signer.getAddress();
-        // const giversTokenAddress = await deployGiversToken();
-        // console.log("GiversToken deployed:", giversTokenAddress);
-
-        // const governanceAddress = await deployGovernance(giversTokenAddress);
-        // console.log("Governance deployed:", governanceAddress);
-
-        // window.location.href =
-        //   window.location.protocol +
-        //   "//" +
-        //   window.location.host +
-        //   "/usageUploadedPost.html?contractAddress=" +
-        //   contractAddress;
+        window.location.href =
+          window.location.protocol +
+          "//" +
+          window.location.host +
+          "/usageUploadedPost.html?contractAddress=" +
+          contractAddress;
       } catch (error) {
         console.error("Error uploading file:", error);
         alert("Error uploading file");

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import axios from 'axios';
 import FormData from 'form-data';
+import exp from 'constants';
 import cors from 'cors';
 
 // __dirname을 ES 모듈에서 사용하기 위한 설정

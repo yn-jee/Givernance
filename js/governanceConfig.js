@@ -13,7 +13,7 @@ const governanceManagerABI = [
         type: "uint256",
       },
     ],
-    name: "creategovernanceToken",
+    name: "createGovernanceToken",
     outputs: [
       {
         internalType: "address",
@@ -32,7 +32,7 @@ const governanceManagerABI = [
         type: "address",
       },
     ],
-    name: "fundraiserTogovernance",
+    name: "fundraiserToGovernance",
     outputs: [
       {
         internalType: "address",
@@ -51,7 +51,7 @@ const governanceManagerABI = [
         type: "address",
       },
     ],
-    name: "getgovernanceToken",
+    name: "getGovernanceToken",
     outputs: [
       {
         internalType: "address",

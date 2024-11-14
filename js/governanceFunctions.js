@@ -4,6 +4,7 @@ import {
   governanceABI,
 } from "./governanceConfig.js";
 
+import { ethers } from "https://unpkg.com/ethers@5.7.2/dist/ethers.esm.min.js";
 export async function createGovernanceToken(
   fundraiserAddress,
   minutesUntilDeadline
@@ -22,6 +23,7 @@ export async function createGovernanceToken(
     // 현재 시간 + 지정된 분까지의 시간을 초 단위로 변환하여 votingDeadline 설정
     const currentTime = Math.floor(Date.now() / 1000); // 현재 시간 (초 단위)
     const votingDeadline = currentTime + minutesUntilDeadline * 60; // 분을 초로 변환하여 더함
+    console.log("마감: ", votingDeadline);
 
     // createGovernanceToken 함수 호출
     const tx = await governanceManagerContract.createGovernanceToken(
@@ -33,6 +35,9 @@ export async function createGovernanceToken(
     const receipt = await tx.wait();
 
     console.log("Governance Token Created:", receipt);
+    const governanceTokenAddress =
+      await governanceManagerContract.getGovernanceToken(fundraiserAddress);
+    console.log("Governance Token Address:", governanceTokenAddress);
     alert("Governance Token created successfully!");
   } catch (error) {
     console.error("Failed to create Governance Token:", error);
@@ -42,17 +47,56 @@ export async function createGovernanceToken(
   }
 }
 
-export async function castVote(voteFor) {
+export async function castVote(contractAddress, voteFor) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
 
-  // GovernanceToken 컨트랙트 연결
-  const governanceTokenContract = new ethers.Contract(
-    governanceTokenAddress,
-    governanceTokenABI,
-    signer
-  );
   try {
+    // GovernanceManager 컨트랙트 주소가 유효한지 확인
+    if (!ethers.utils.isAddress(governanceManagerAddress)) {
+      console.error(
+        "Invalid Governance Manager Address:",
+        governanceManagerAddress
+      );
+      alert("Invalid Governance Manager Address.");
+      return;
+    }
+
+    // GovernanceManager 컨트랙트 연결
+    const governanceManagerContract = new ethers.Contract(
+      governanceManagerAddress,
+      governanceManagerABI,
+      signer
+    );
+
+    console.log(contractAddress);
+    // getGovernanceToken 호출
+    const governanceTokenAddress =
+      await governanceManagerContract.getGovernanceToken(contractAddress);
+    console.log("Governance Token Address:", governanceTokenAddress);
+
+    // GovernanceToken 주소가 유효한지 확인
+    if (
+      !ethers.utils.isAddress(governanceTokenAddress) ||
+      governanceTokenAddress === ethers.constants.AddressZero
+    ) {
+      console.error(
+        "Invalid Governance Token Address:",
+        governanceTokenAddress
+      );
+      alert(
+        "Invalid Governance Token Address. Please check the contract mapping."
+      );
+      return;
+    }
+
+    // GovernanceToken 컨트랙트 연결
+    const governanceTokenContract = new ethers.Contract(
+      governanceTokenAddress,
+      governanceABI,
+      signer
+    );
+
     // `voteFor`는 true (찬성) 또는 false (반대)
     const tx = await governanceTokenContract.vote(voteFor);
 
@@ -81,8 +125,29 @@ export async function castVote(voteFor) {
   }
 }
 
-export async function getVotingResults() {
+export async function getVotingResults(contractAddress) {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
   try {
+    // GovernanceManager 컨트랙트 연결
+    const governanceManagerContract = new ethers.Contract(
+      governanceManagerAddress,
+      governanceManagerABI,
+      signer
+    );
+
+    // getGovernanceToken 호출
+    const governanceTokenAddress =
+      await governanceManagerContract.getGovernanceToken(contractAddress);
+    console.log("Governance Token Address:", governanceTokenAddress);
+
+    // GovernanceToken 컨트랙트 연결
+    const governanceTokenContract = new ethers.Contract(
+      governanceTokenAddress,
+      governanceABI,
+      signer
+    );
+
     const [totalVotesFor, totalVotesAgainst] =
       await governanceTokenContract.getVotingResult();
 
