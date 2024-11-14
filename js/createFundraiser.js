@@ -43,16 +43,6 @@ function getImageFiles(e) {
   const files = e.currentTarget.files;
   const imagePreview = document.querySelector(".imagePreview");
 
-  if (existingImages.length + [...files].length == 0) {
-    const file = "images/donationBox.png";
-    existingImages.push(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const preview = createElement(e, file);
-      imagePreview.appendChild(preview);
-    };
-    reader.readAsDataURL(file);
-  }
   // 새로 추가하려는 이미지의 개수가 기존 이미지와 합쳐서 5개를 넘는지 확인
   if (existingImages.length + [...files].length > 5) {
     alert("이미지는 최대 5개 까지 업로드가 가능합니다.");
@@ -242,9 +232,29 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         const fileInput = document.querySelector(".fundraiserImage");
-        [...fileInput.files].forEach((file) => {
-          files.push(file);
-        });
+
+        // 파일 입력에 이미지가 없는 경우 기본 이미지를 추가
+        if (fileInput.files.length === 0) {
+          // 기본 이미지 경로에서 Blob 가져오기
+          const response = await fetch("../images/donationBox.png");
+          const blob = await response.blob();
+
+          // Blob을 사용하여 File 객체 생성
+          const defaultImageFile = new File([blob], "donationBox.png", {
+            type: blob.type,
+          });
+
+          // files 배열에 기본 이미지 추가
+          files.push(defaultImageFile);
+        } else {
+          [...fileInput.files].forEach((file) => {
+            files.push(file);
+          });
+        }
+
+        // [...fileInput.files].forEach((file) => {
+        //   files.push(file);
+        // });
 
         const fundraiserType = document.querySelector(
           'input[name="fundraiserType"]:checked'
