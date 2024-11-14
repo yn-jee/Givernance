@@ -8,6 +8,7 @@ import {
 } from "./contractConfig.js";
 import {
   createGovernanceToken,
+  getGovernanceToken,
   castVote,
   getVotingResults,
 } from "./governanceFunctions.js";
@@ -594,6 +595,14 @@ async function fetchAndDisplayUsageDetails(
     displayTextData();
     displayImageData();
 
+    document
+      .getElementById("getGovernanceButton")
+      .addEventListener("click", async function () {
+        // 투표하기
+        // 찬성
+        console.log(contractAddress);
+        getGovernanceToken(contractAddress);
+      });
     document
       .getElementById("voteForButton")
       .addEventListener("click", async function () {

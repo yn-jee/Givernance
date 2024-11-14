@@ -8,6 +8,7 @@ import {
 } from "./contractConfig.js";
 import {
   createGovernanceToken,
+  getGovernanceToken,
   castVote,
   getVotingResults,
 } from "./governanceFunctions.js";
@@ -518,9 +519,25 @@ async function fetchAndDisplayFundraiserDetails(
       files.push(fileDescription);
 
       const fileInput = document.querySelector(".usageImage");
-      [...fileInput.files].forEach((file) => {
-        files.push(file);
-      });
+
+      // 파일 입력에 이미지가 없는 경우 기본 이미지를 추가
+      if (fileInput.files.length === 0) {
+        // 기본 이미지 경로에서 Blob 가져오기
+        const response = await fetch("../images/hands.png");
+        const blob = await response.blob();
+
+        // Blob을 사용하여 File 객체 생성
+        const defaultImageFile = new File([blob], "hands.png", {
+          type: blob.type,
+        });
+
+        // files 배열에 기본 이미지 추가
+        files.push(defaultImageFile);
+      } else {
+        [...fileInput.files].forEach((file) => {
+          files.push(file);
+        });
+      }
 
       const fileRaisedAmount = new File([raisedAmount], "raisedAmount.txt", {
         type: "text/plain",
@@ -565,14 +582,16 @@ async function fetchAndDisplayFundraiserDetails(
 
         // Deploy GiversToken
         // 토큰을 생성할 모금함 주소, 투표 기간(분)
-        createGovernanceToken(contractAddress, 6);
+        createGovernanceToken(contractAddress, 10);
 
-        window.location.href =
-          window.location.protocol +
-          "//" +
-          window.location.host +
-          "/usageUploadedPost.html?contractAddress=" +
-          contractAddress;
+        getGovernanceToken(contractAddress);
+
+        // window.location.href =
+        //   window.location.protocol +
+        //   "//" +
+        //   window.location.host +
+        //   "/usageUploadedPost.html?contractAddress=" +
+        //   contractAddress;
       } catch (error) {
         console.error("Error uploading file:", error);
         alert("Error uploading file");

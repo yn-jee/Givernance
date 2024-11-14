@@ -5,6 +5,7 @@ import {
 } from "./governanceConfig.js";
 
 import { ethers } from "https://unpkg.com/ethers@5.7.2/dist/ethers.esm.min.js";
+
 export async function createGovernanceToken(
   fundraiserAddress,
   minutesUntilDeadline
@@ -43,6 +44,31 @@ export async function createGovernanceToken(
     console.error("Failed to create Governance Token:", error);
     alert(
       "Failed to create Governance Token. Please check the console for details."
+    );
+  }
+}
+export async function getGovernanceToken(fundraiserAddress) {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정
+    const signer = provider.getSigner(); // 트랜잭션 서명자를 지갑에서 가져옴
+
+    // GovernanceManager 컨트랙트 연결
+    const governanceManagerContract = new ethers.Contract(
+      governanceManagerAddress,
+      governanceManagerABI,
+      signer
+    );
+
+    // getGovernanceToken 함수 호출
+    const governanceTokenAddress =
+      await governanceManagerContract.getGovernanceToken(fundraiserAddress);
+
+    console.log("Governance Token Address:", governanceTokenAddress);
+    return governanceTokenAddress; // 필요 시 반환
+  } catch (error) {
+    console.error("Failed to get Governance Token address:", error);
+    alert(
+      "Failed to get Governance Token address. Please check the console for details."
     );
   }
 }
@@ -162,6 +188,7 @@ export async function getVotingResults(contractAddress) {
     );
   }
 }
+
 // export async function deployGiversToken() {
 //   try {
 //     const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정
