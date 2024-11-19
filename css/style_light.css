@@ -481,7 +481,8 @@ form {
   gap: 20px;
 }
 
-#donateModalOpenButton {
+#donateModalOpenButton,
+#openVoteModalButton {
   margin-top: 20px;
   margin-bottom: 40px;
   width: 200px;
@@ -834,7 +835,8 @@ form {
 /*모달 창*/
 
 .donateModal,
-.addItemModal {
+.addItemModal,
+.voteModal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -867,6 +869,20 @@ form {
   border-radius: 30px;
 }
 
+.voteModalContent {
+  background-color: #fffff3;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+  height: 50%; /* Could be more or less, depending on content */
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  animation-name: animatetop;
+  animation-duration: 0.2s;
+  border-radius: 30px;
+}
+
 .addItemModalContent {
   background-color: #fffff3;
   margin: 15% auto; /* 15% from the top and centered */
@@ -881,7 +897,8 @@ form {
 }
 
 .donateModalClose,
-.addItemModalClose {
+.addItemModalClose,
+.voteModalClose {
   margin-left: 95%;
   font-size: 24px;
   font-weight: bold;
@@ -1126,4 +1143,126 @@ form {
 }
 .usageImage {
   width: 80%;
+}
+
+/* 투표 모달 */
+/* 모달 전체 */
+
+/* 닫기 버튼 */
+
+/* 모달 헤더 */
+#voteModalHeader {
+  font-size: 24px;
+  color: darkolivegreen;
+  margin-bottom: 20px;
+}
+
+/* 버튼 컨테이너 */
+.registerButtonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* 투표 항목 버튼 기본 스타일 */
+.registerButtonContainer button {
+  width: 40%;
+  height: 240px;
+  padding: 40px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); /* 기본 그림자 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: #666;
+}
+
+/* 아이콘 */
+.registerButtonContainer button span {
+  font-size: 100px;
+  margin-bottom: 8px;
+}
+
+/* 토글 비활성화 상태 */
+.registerButtonContainer button.inactive {
+  background-color: #f5f5f5;
+  transform: translateY(0); /* 기본 위치 */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 더 얕은 그림자 */
+  color: #aaa;
+}
+
+/* 토글 활성화 상태 */
+.registerButtonContainer button.active {
+  background-color: #e7f4e4; /* 연한 녹색 */
+  transform: translateY(-10px); /* 약간 위로 이동 */
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); /* 더 강한 그림자 */
+  color: #4a7c59; /* 강조 색상 */
+}
+
+/* 투표하기 버튼 */
+.voteButton {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  width: 200px;
+  height: 40px;
+  background: darkolivegreen;
+  color: beige;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+#voteForButton:hover,
+#voteAgainstButton:hover {
+  transform: translateY(-2px);
+}
+
+#modalVoteForButton.selected {
+  background-color: #ffffff;
+  color: #1e9eff;
+  border: 5px solid #a7d9fe;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#modalVoteAgainstButton.selected {
+  background-color: #ffffff;
+  color: #ff6828;
+  border: 5px solid #ffdddd;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#modalVoteForButton:not(.selected) {
+  background-color: #f2f2f2;
+  color: #1e9eff;
+  border: 5px solid #8ebadc;
+  font-size: 20px;
+}
+
+#modalVoteAgainstButton:not(.selected) {
+  background-color: #f2f2f2;
+  color: #ff6828;
+  border: 5px solid #e7c1c1;
+  font-size: 20px;
+}
+
+#donationAmount {
+  font-size: 18px;
+  margin-top: 38px;
+  margin-bottom: 0px;
 }

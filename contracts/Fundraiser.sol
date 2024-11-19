@@ -67,7 +67,9 @@ contract Fundraiser {
     }
 
     function getInfo(address _address) public view returns (uint256) {
-        require(donations[_address] > 0, "No Data"); 
+        if (donations[_address] == 0) {
+            return 0; // 데이터가 없을 때 0 반환
+        }
         return donations[_address];
     }
 

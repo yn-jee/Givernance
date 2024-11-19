@@ -77,6 +77,31 @@ async function getContractCreationBlock(provider, events, _fundraiserAddress) {
   throw new Error("Fundraiser address not found in events");
 }
 
+async function getDonationAmount(
+  provider,
+  connectedAddress,
+  _fundraiserAddress
+) {
+  try {
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      _fundraiserAddress,
+      fundraiserABI,
+      signer
+    );
+    // const result = await contract.getInfo(connectedAddress);
+
+    // return result.toString(); // 반환된 값을 문자열로 변환 (wei 단위)
+    return ethers.utils.formatUnits(
+      await contract.getInfo(connectedAddress),
+      "gwei"
+    );
+  } catch (error) {
+    console.error("Error calling getInfo:", error.message);
+    return 0; // 예상하지 못한 오류 시에도 0을 반환
+  }
+}
+
 // 타임스탬프 가져오기
 async function getBlockTimestamp(provider, blockNumber) {
   const block = await provider.getBlock(blockNumber);
@@ -407,6 +432,85 @@ async function fetchAndDisplayFundraiserDetails(
 
     const image = images || "images/donationBox.png";
 
+    // 현재 연결된 지갑이 후원한 금액
+    const donationAmount = await getDonationAmount(
+      provider,
+      connectedAddress,
+      contractAddress
+    );
+    console.log(`User's donation amount: ${donationAmount}`);
+
+    // if (donationAmount != 0) {
+
+    // }
+
+    var modal = document.getElementsByClassName("voteModal")[0];
+    var openVoteModalButton = document.getElementById("openVoteModalButton");
+    var closeButton = document.querySelector(".voteModal .voteModalClose");
+    var voteForButton = document.getElementById("modalVoteForButton");
+    var voteAgainstButton = document.getElementById("modalVoteAgainstButton");
+    var voteButton = document.querySelector(".voteButton");
+    var donationAmountElement = document.getElementById("donationAmount");
+
+    donationAmountElement.innerHTML = `후원금 <b>${donationAmount} GWEI</b>에 비례하여 투표됩니다.`;
+
+    let selectedVote = true; // 기본값: true (for 선택됨)
+
+    // 모달 열기
+    openVoteModalButton.addEventListener("click", function () {
+      modal.style.display = "flex";
+      modal.style.animation = "fadeIn 0.2s";
+
+      // 기본값 초기화 (for 버튼 선택 상태로 설정)
+      voteForButton.classList.add("selected");
+      voteAgainstButton.classList.remove("selected");
+      selectedVote = true; // 기본적으로 for로 선택
+    });
+
+    function closeModal() {
+      modal.style.animation = "fadeOut 0.2s";
+    }
+
+    modal.addEventListener("animationend", (event) => {
+      if (event.animationName === "fadeOut") {
+        modal.style.display = "none";
+      }
+    });
+
+    closeButton.addEventListener("click", closeModal);
+
+    // "만족해요" 버튼 클릭
+    voteForButton.addEventListener("click", function () {
+      selectedVote = true; // 찬성 선택
+      voteForButton.classList.add("selected");
+      voteAgainstButton.classList.remove("selected");
+    });
+
+    // "아쉬워요" 버튼 클릭
+    voteAgainstButton.addEventListener("click", function () {
+      selectedVote = false; // 반대 선택
+      voteAgainstButton.classList.add("selected");
+      voteForButton.classList.remove("selected");
+    });
+
+    // 투표 버튼 클릭
+    voteButton.addEventListener("click", async function () {
+      try {
+        console.log("선택된 옵션:", selectedVote ? "만족해요" : "아쉬워요");
+        console.log(contractAddress);
+        if (selectedVote) {
+          castVote(contractAddress, true);
+        } else {
+          castVote(contractAddress, false);
+        }
+
+        modal.style.animation = "fadeOut 0.2s";
+      } catch (error) {
+        console.error("투표 실패:", error);
+        alert("투표에 실패했습니다. 다시 시도해주세요.");
+      }
+    });
+
     // 페이지에 표시할 내용 생성
     const detailsDiv = document.getElementById("fundraiserDetails");
     detailsDiv.innerHTML = `
@@ -595,33 +699,34 @@ async function fetchAndDisplayUsageDetails(
     displayTextData();
     displayImageData();
 
-    document
-      .getElementById("getGovernanceButton")
-      .addEventListener("click", async function () {
-        // 투표하기
-        // 찬성
-        console.log(contractAddress);
-        getGovernanceToken(contractAddress);
-      });
-    document
-      .getElementById("voteForButton")
-      .addEventListener("click", async function () {
-        // 투표하기
-        // 찬성
-        console.log(contractAddress);
-        castVote(contractAddress, true);
-      });
-    document
-      .getElementById("voteAgainstButton")
-      .addEventListener("click", async function () {
-        // 반대
-        castVote(contractAddress, false);
-      });
-    document
-      .getElementById("getVotingResultsButton")
-      .addEventListener("click", async function () {
-        getVotingResults(contractAddress);
-      });
+    // document
+    //   .getElementById("getGovernanceButton")
+    //   .addEventListener("click", async function () {
+    //     // 투표하기
+    //     // 찬성
+    //     console.log(contractAddress);
+    //     getGovernanceToken(contractAddress);
+    //   });
+    // document
+    //   .getElementById("voteForButton")
+    //   .addEventListener("click", async function () {
+    //     // 투표하기
+    //     // 찬성
+    //     console.log(contractAddress);
+    //     castVote(contractAddress, true);
+    //   });
+    // document
+    //   .getElementById("voteAgainstButton")
+    //   .addEventListener("click", async function () {
+    //     // 반대
+    //     castVote(contractAddress, false);
+    //   });
+    // document
+    //   .getElementById("getVotingResultsButton")
+    //   .addEventListener("click", async function () {
+    //     getVotingResults(contractAddress);
+    //   });
+
     // document // 여기서부터. 주소 기록이 받아와지는지 확인하기... 토큰컨트랙트 자체가
     //   .getElementById("getGovernanceAddressButton")
     //   .addEventListener("click", async function () {
