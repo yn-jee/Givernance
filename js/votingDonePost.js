@@ -440,76 +440,7 @@ async function fetchAndDisplayFundraiserDetails(
     );
     console.log(`User's donation amount: ${donationAmount}`);
 
-    // if (donationAmount != 0) {
-
-    // }
-
-    var modal = document.getElementsByClassName("voteModal")[0];
-    var openVoteModalButton = document.getElementById("openVoteModalButton");
-    var closeButton = document.querySelector(".voteModal .voteModalClose");
-    var voteForButton = document.getElementById("modalVoteForButton");
-    var voteAgainstButton = document.getElementById("modalVoteAgainstButton");
-    var voteButton = document.querySelector(".voteButton");
-    var donationAmountElement = document.getElementById("donationAmount");
-
-    donationAmountElement.innerHTML = `후원금 <b>${donationAmount} GWEI</b>에 비례하여 투표됩니다.`;
-
-    let selectedVote = true; // 기본값: true (for 선택됨)
-
-    // 모달 열기
-    openVoteModalButton.addEventListener("click", function () {
-      modal.style.display = "flex";
-      modal.style.animation = "fadeIn 0.2s";
-
-      // 기본값 초기화 (for 버튼 선택 상태로 설정)
-      voteForButton.classList.add("selected");
-      voteAgainstButton.classList.remove("selected");
-      selectedVote = true; // 기본적으로 for로 선택
-    });
-
-    function closeModal() {
-      modal.style.animation = "fadeOut 0.2s";
-    }
-
-    modal.addEventListener("animationend", (event) => {
-      if (event.animationName === "fadeOut") {
-        modal.style.display = "none";
-      }
-    });
-
-    closeButton.addEventListener("click", closeModal);
-
-    // "만족해요" 버튼 클릭
-    voteForButton.addEventListener("click", function () {
-      selectedVote = true; // 찬성 선택
-      voteForButton.classList.add("selected");
-      voteAgainstButton.classList.remove("selected");
-    });
-
-    // "아쉬워요" 버튼 클릭
-    voteAgainstButton.addEventListener("click", function () {
-      selectedVote = false; // 반대 선택
-      voteAgainstButton.classList.add("selected");
-      voteForButton.classList.remove("selected");
-    });
-
-    // 투표 버튼 클릭
-    voteButton.addEventListener("click", async function () {
-      try {
-        console.log("선택된 옵션:", selectedVote ? "만족해요" : "아쉬워요");
-        console.log(contractAddress);
-        if (selectedVote) {
-          castVote(contractAddress, true);
-        } else {
-          castVote(contractAddress, false);
-        }
-
-        modal.style.animation = "fadeOut 0.2s";
-      } catch (error) {
-        console.error("투표 실패:", error);
-        alert("투표에 실패했습니다. 다시 시도해주세요.");
-      }
-    });
+    // 여기에 투표 결과
 
     // 페이지에 표시할 내용 생성
     const detailsDiv = document.getElementById("fundraiserDetails");

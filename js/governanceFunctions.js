@@ -189,6 +189,38 @@ export async function getVotingResults(contractAddress) {
   }
 }
 
+export async function isVotingDone(contractAddress) {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  try {
+    // GovernanceManager 컨트랙트 연결
+    const governanceManagerContract = new ethers.Contract(
+      governanceManagerAddress,
+      governanceManagerABI,
+      signer
+    );
+
+    // getGovernanceToken 호출
+    const governanceTokenAddress =
+      await governanceManagerContract.getGovernanceToken(contractAddress);
+    console.log("Governance Token Address:", governanceTokenAddress);
+
+    // GovernanceToken 컨트랙트 연결
+    const governanceTokenContract = new ethers.Contract(
+      governanceTokenAddress,
+      governanceABI,
+      signer
+    );
+
+    const isVotingDone = await governanceTokenContract.isDone();
+    return isVotingDone;
+  } catch (error) {
+    console.error("Failed to retrieve voting results:", error);
+    alert(
+      "Failed to retrieve voting results. Please check the console for details."
+    );
+  }
+}
 // export async function deployGiversToken() {
 //   try {
 //     const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정

@@ -5,6 +5,13 @@ import {
   fundraiserABI,
 } from "./contractConfig.js";
 import {
+  createGovernanceToken,
+  getGovernanceToken,
+  castVote,
+  getVotingResults,
+  isVotingDone,
+} from "./governanceFunctions.js";
+import {
   fundraiserInfoContract,
   usageRecordContract,
   IpfsContractABI,
@@ -161,6 +168,13 @@ async function fetchAllFundraiserDetails(fundraiserAddresses, provider) {
       const usageData = await getData(usageIpfscontract, address);
       const isUsageUploaded = usageData.hashes.length > 0;
 
+      const governanceTokenAddress = await getGovernanceToken(address);
+      const zeroAddress = "0x0000000000000000000000000000000000000000";
+      let isVotingDone = false;
+      if (governanceTokenAddress.toLowerCase() !== zeroAddress.toLowerCase()) {
+        isVotingDone = await isVotingDone(address);
+      }
+
       return {
         address,
         name,
@@ -170,6 +184,7 @@ async function fetchAllFundraiserDetails(fundraiserAddresses, provider) {
         finishTimeString,
         raisedAmount,
         isUsageUploaded,
+        isVotingDone,
       };
     })
   );
@@ -253,12 +268,43 @@ async function renderFundraisers(details, container, state) {
         window.location.href = postAddress;
       });
       container.appendChild(item);
-    } else if (state === "usageUploaded" && detail.isUsageUploaded) {
+    } else if (
+      state === "usageUploaded" &&
+      detail.isUsageUploaded &&
+      !detail.isVotingDone
+    ) {
       fundraisersFound = true;
+
+      if (detail.name.length >= 15) {
+        item.classList.add("tightSpacing");
+        console.log("long title", detail.name);
+      }
 
       const item = document.createElement("div");
       const postAddress =
         "usageUploadedPost.html?contractAddress=" + detail.address;
+      item.id = "fundraiserBox";
+      item.innerHTML = `
+            <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
+            <h2 class="fundraiser-title">${detail.name}</h2>
+            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
+            <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
+            `;
+      item.addEventListener("click", function () {
+        window.location.href = postAddress;
+      });
+      container.appendChild(item);
+    } else if (state === "usageUploaded" && detail.isVotingDone) {
+      fundraisersFound = true;
+
+      if (detail.name.length >= 15) {
+        item.classList.add("tightSpacing");
+        console.log("long title", detail.name);
+      }
+
+      const item = document.createElement("div");
+      const postAddress =
+        "votingDonePost.html?contractAddress=" + detail.address;
       item.id = "fundraiserBox";
       item.innerHTML = `
             <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">

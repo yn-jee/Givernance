@@ -1,4 +1,4 @@
-const governanceManagerAddress = "0x7ba672591fe88debb338344d8412c21744d1f7a9";
+const governanceManagerAddress = "0x3509dd954a5b0301276ec84caa50827fe711f0b7";
 const governanceManagerABI = [
   {
     inputs: [
@@ -306,6 +306,19 @@ const governanceABI = [
       },
     ],
     name: "isApprovedForAll",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isDone",
     outputs: [
       {
         internalType: "bool",

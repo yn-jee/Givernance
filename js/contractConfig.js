@@ -1,4 +1,4 @@
-const fundraiserFactoryAddress = "0xb23890bd681e446a47783b3f93b7ac4308fe2e02";
+const fundraiserFactoryAddress = "0xede6947d0e2035cbd7a606c785820d2758d3b166";
 const fundraiserFactoryABI = [
   {
     inputs: [
