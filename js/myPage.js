@@ -977,6 +977,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         item.id.replace("Menu", "Section")
       );
       if (activeSection) {
+        if ((activeSection.href = "index.html")) {
+          window.location.href =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            "/index.html";
+        }
         console.log(activeSection);
         activeSection.style.display = "flex";
       }
