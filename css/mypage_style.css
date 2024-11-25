@@ -6,15 +6,30 @@ body {
   padding: 0;
 }
 
+#createFundraiserButton {
+  margin-bottom: 30px;
+  /* width: 140px; */
+  /* height: 40px; */
+  background: #ff4e36;
+  color: beige;
+  font-weight: bold;
+  border: 5px solid #ff4e36;
+  border-radius: 30px;
+  font-size: 20px;
+}
+
 .sidebar {
   height: 100vh;
-  width: 200px;
+  width: 230px;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   background-color: #556b2f;
   overflow-x: hidden;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
   padding-top: 20px;
 }
 
@@ -44,7 +59,7 @@ body {
 }
 
 .mainContainer {
-  margin-left: 200px; /* Sidebar 너비만큼 왼쪽 여백 */
+  margin-left: 230px; /* Sidebar 너비만큼 왼쪽 여백 */
   flex-grow: 1; /* 남은 영역을 차지 */
   display: flex;
   align-items: center; /* 수직 중앙 정렬 */

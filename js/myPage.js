@@ -957,6 +957,17 @@ async function detectWallets(walletSelector) {
 // });
 
 document.addEventListener("DOMContentLoaded", async function () {
+  var createFundraiserButton = document.getElementById(
+    "createFundraiserButton"
+  );
+  createFundraiserButton.addEventListener("click", function () {
+    window.location.href =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      "/createFundraiser.html";
+  });
+
   const menuItems = document.querySelectorAll(".sidebar a");
   const sections = document.querySelectorAll(".mainContent section");
   const walletSelector = document.getElementById("walletSelector");
@@ -977,7 +988,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         item.id.replace("Menu", "Section")
       );
       if (activeSection) {
-        if ((activeSection.href = "index.html")) {
+        if (activeSection.id === "mainPageLink") {
           window.location.href =
             window.location.protocol +
             "//" +
