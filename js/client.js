@@ -467,12 +467,6 @@ async function renderFundraiserState(
     votingDone: `votingDonePost.html?contractAddress=${detail.address}`,
   };
 
-  const finishMessageMapping = {
-    fundraising: `${detail.finishTimeString}에 마감돼요`,
-    usageUploaded: `${detail.finishTimeString}에 마감되었어요`,
-    votingDone: `${detail.finishTimeString}에 마감되었어요`,
-  };
-
   let { raisedAmountGwei, targetAmountGwei } = await fetchFundraiserDetails(
     provider,
     signer,
@@ -482,7 +476,11 @@ async function renderFundraiserState(
   );
 
   const postAddress = postAddressMapping[state];
-  const finishMessage = finishMessageMapping[state];
+
+  const finishMessage =
+    detail.finishTime > new Date()
+      ? `${detail.finishTimeString}에 마감돼요`
+      : `${detail.finishTimeString}에 마감되었어요`;
 
   const item = await createFundraiserItem(
     detail,
