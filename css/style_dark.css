@@ -5,6 +5,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   overflow-x: hidden;
+  margin: 0px;
 }
 
 div {
@@ -31,15 +32,10 @@ div {
   text-align: right;
 }
 
-#logIn {
-  margin-right: 60px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  color: beige;
-  text-decoration: none;
-}
-
-#signUp {
+#logIn,
+#logOut,
+#signUp,
+#myPage {
   margin-right: 60px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -283,7 +279,7 @@ form {
   max-width: 300px;
   transition: all 0.3s cubic-bezier(0.42, 0, 0.58, 1);
   color: black;
-  aspect-ratio: 1 / 1.3;
+  aspect-ratio: 1 / 1.5;
   justify-content: space-between;
   display: flex;
   flex-direction: column;
@@ -387,3 +383,56 @@ form {
 }
 
 /*fundraiser creation*/
+
+.progressContainer {
+  font-size: 90%;
+  width: 90%;
+  align-self: center;
+}
+
+.fundraisingStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.raisedAmount {
+  font-size: 1.2em;
+  color: #000;
+  text-align: left;
+}
+
+.progressPercentage {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #008df9;
+}
+
+.progressBarContainer {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  margin: 10px 0;
+}
+
+.progressBar {
+  background-color: #008df9;
+  height: 100%;
+  width: 0;
+}
+
+.supporterInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.targetAmount {
+  color: #666;
+}
+
+.finish-date {
+  font-size: 90%;
+}

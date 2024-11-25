@@ -84,6 +84,63 @@ async function displayImageData(image) {
   }
 }
 
+async function getEvents(provider, fundraiserFactoryAddress) {
+  const fundraiserFactory = new ethers.Contract(
+    fundraiserFactoryAddress,
+    fundraiserFactoryABI,
+    provider
+  );
+
+  const fromBlock = 0;
+  const toBlock = "latest";
+  const events = await fundraiserFactory.queryFilter(
+    fundraiserFactory.filters.FundraiserCreated(),
+    fromBlock,
+    toBlock
+  );
+  return events;
+}
+
+async function getTargetEvent(provider, events, _fundraiserAddress) {
+  for (let event of events) {
+    const txHash = event.transactionHash;
+    const tx = await provider.getTransaction(txHash);
+    if (_fundraiserAddress == event.args.fundraiserAddress) {
+      return event;
+    }
+  }
+}
+
+async function getFundraiserCreatorAddresses(
+  provider,
+  event,
+  _fundraiserAddress
+) {
+  const txHash = event.transactionHash;
+  const tx = await provider.getTransaction(txHash);
+  const creatorAddress = tx.from;
+  if (_fundraiserAddress == event.args.fundraiserAddress) {
+    return creatorAddress;
+  }
+}
+
+async function getWithdrawEvents(contractAddress, provider) {
+  const fundraiser = new ethers.Contract(
+    contractAddress,
+    fundraiserABI,
+    provider
+  );
+
+  const fromBlock = 0;
+  const toBlock = "latest";
+  const events = await fundraiser.queryFilter(
+    fundraiser.filters.Withdraw(),
+    fromBlock,
+    toBlock
+  );
+  return events;
+}
+
 async function fetchAllEventsFromContract(provider) {
   try {
     const signer = provider.getSigner();
@@ -204,8 +261,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
 
+    let { provider, signer, connectedAddress } = await initializeProvider();
     const fundraiserAddresses = await fetchAllEventsFromContract(provider);
     const details = await fetchAllFundraiserDetails(
       fundraiserAddresses,
@@ -219,7 +277,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       'input[name="fundraiserState"][value="fundraising"]'
     );
     fundraisingRadio.checked = true;
-    await renderFundraisers(details, container, "fundraising");
+    await renderFundraisers(
+      provider,
+      details,
+      container,
+      "fundraising",
+      connectedAddress
+    );
 
     document
       .querySelectorAll('input[name="fundraiserState"]')
@@ -227,7 +291,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         radio.addEventListener("change", async function () {
           overlay.style.display = "flex"; // 오버레이 활성화
           const selectedState = this.value;
-          await renderFundraisers(details, container, selectedState);
+          await renderFundraisers(
+            provider,
+            details,
+            container,
+            selectedState,
+            connectedAddress
+          );
           overlay.style.display = "none"; // 오버레이 비활성화
         });
       });
@@ -238,12 +308,229 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
-async function renderFundraisers(details, container, state) {
+async function fetchFundraiserDetails(
+  provider,
+  signer,
+  connectedAddress,
+  address,
+  factoryAddress
+) {
+  try {
+    // animation.startTask();
+
+    // 컨트랙트 객체 생성
+    const contract = new ethers.Contract(address, fundraiserABI, provider);
+    // 모든 트랜잭션 가져오기
+    const events = await getEvents(provider, factoryAddress);
+    const targetEvent = await getTargetEvent(provider, events, address);
+
+    const contractOwner = await getFundraiserCreatorAddresses(
+      provider,
+      targetEvent,
+      address
+    );
+    console.log(contractOwner);
+
+    var raisedAmountGwei;
+
+    const withdrawEvents = await getWithdrawEvents(address, provider);
+    console.log("기록들", withdrawEvents);
+    withdrawEvents.forEach((event) => {
+      console.log(`Creator: ${event.args.creator}`);
+      console.log(
+        `Amount Withdrawn: ${ethers.utils.formatEther(event.args.amount)} ETH`
+      );
+      console.log(`Block Number: ${event.blockNumber}`);
+      console.log(`Transaction Hash: ${event.transactionHash}`);
+      console.log("------------------------------------");
+    });
+
+    if (withdrawEvents.length > 0) {
+      raisedAmountGwei = ethers.utils.formatUnits(
+        withdrawEvents[0].args.amount,
+        "gwei"
+      );
+    } else {
+      raisedAmountGwei = ethers.utils.formatUnits(
+        await contract.raisedAmount(),
+        "gwei"
+      );
+    }
+
+    let targetAmountGwei = ethers.utils.formatUnits(
+      await contract.targetAmount(),
+      "gwei"
+    );
+
+    return { raisedAmountGwei, targetAmountGwei };
+  } catch (error) {
+    console.error("Error fetching contract details:", error);
+    // animation.endTask(); // 에러 발생 시에도 로딩 종료
+  }
+}
+
+async function createFundraiserItem(
+  detail,
+  raisedAmountGwei,
+  targetAmountGwei,
+  postAddress,
+  finishMessage
+) {
+  const item = document.createElement("div");
+  item.id = "fundraiserBox";
+
+  // 소수점 제거 및 Gwei -> ETH 변환
+  raisedAmountGwei = Math.floor(parseFloat(raisedAmountGwei));
+  targetAmountGwei = Math.floor(parseFloat(targetAmountGwei));
+
+  let isRaisedAmountGwei = false;
+  if (raisedAmountGwei >= 10000000) isRaisedAmountGwei = true;
+
+  const raisedAmount =
+    raisedAmountGwei >= 10000000
+      ? `${ethers.utils.formatEther(
+          ethers.utils.parseUnits(raisedAmountGwei.toString(), "gwei")
+        )} ETH`
+      : `${raisedAmountGwei.toLocaleString()} GWEI`;
+
+  const targetAmount =
+    targetAmountGwei >= 10000000
+      ? `${ethers.utils.formatEther(
+          ethers.utils.parseUnits(targetAmountGwei.toString(), "gwei")
+        )} ETH`
+      : `${targetAmountGwei.toLocaleString()} GWEI`;
+
+  // if (detail.name.length >= 15) {
+  //   item.classList.add("tightSpacing");
+  //   console.log("Long title:", detail.name);
+  //   item.style.fontSize = "0.9rem"; // 글자 크기 줄이기
+  //   item.style.lineHeight = "1.2"; // 줄 간격 조정
+  // }
+
+  console.log("Raised:", raisedAmountGwei, "Target:", targetAmountGwei);
+
+  item.innerHTML = `
+      <img class="donationBox" src="${
+        detail.fundraiserImage
+      }" title="donationBox">
+      <h2 class="fundraiser-title">${detail.name}</h2>
+      <div class="progressContainer">
+          <div class="fundraisingStatus">
+          <div class="raisedAmount">${
+            isRaisedAmountGwei
+              ? `<b>${raisedAmount}</b> 후원되었어요` // 줄바꿈 처리
+              : `<b>${raisedAmount}</b><br>후원되었어요`
+          }</div>
+          <div class="progressPercentage">${(
+            (raisedAmountGwei / targetAmountGwei) *
+            100
+          ).toFixed(1)}%</div>
+          </div>
+          <div class="progressBarContainer">
+              <div class="progressBar" style="width: ${
+                (raisedAmountGwei / targetAmountGwei) * 100
+              }%;"></div>
+          </div>
+          <div class="supporterInfo">
+              <span class="targetAmount"><b>${targetAmount}</b> 목표</span>
+          </div>
+      </div>
+      <p class="finish-date">${finishMessage}</p>
+    `;
+
+  const titleElement = item.querySelector(".fundraiser-title");
+  if (detail.name.length >= 15) {
+    titleElement.style.fontSize = "1.3em"; // 글자 크기 줄이기
+    titleElement.style.lineHeight = "1.2"; // 줄 간격 조정
+    console.log("Long title adjusted:", detail.name);
+  }
+
+  item.addEventListener("click", function () {
+    window.location.href = postAddress;
+  });
+
+  return item;
+}
+
+async function renderFundraiserState(
+  state,
+  detail,
+  provider,
+  signer,
+  selectedWallet,
+  container,
+  fundraiserFactoryAddress
+) {
+  const postAddressMapping = {
+    fundraising: `post.html?contractAddress=${detail.address}`,
+    usageUploaded: `usageUploadedPost.html?contractAddress=${detail.address}`,
+    votingDone: `votingDonePost.html?contractAddress=${detail.address}`,
+  };
+
+  const finishMessageMapping = {
+    fundraising: `${detail.finishTimeString}에 마감돼요`,
+    usageUploaded: `${detail.finishTimeString}에 마감되었어요`,
+    votingDone: `${detail.finishTimeString}에 마감되었어요`,
+  };
+
+  let { raisedAmountGwei, targetAmountGwei } = await fetchFundraiserDetails(
+    provider,
+    signer,
+    selectedWallet,
+    detail.address,
+    fundraiserFactoryAddress
+  );
+
+  const postAddress = postAddressMapping[state];
+  const finishMessage = finishMessageMapping[state];
+
+  const item = await createFundraiserItem(
+    detail,
+    raisedAmountGwei,
+    targetAmountGwei,
+    postAddress,
+    finishMessage
+  );
+  container.appendChild(item);
+}
+
+async function renderFundraisers(
+  provider,
+  details,
+  container,
+  state,
+  selectedWallet
+) {
   container.innerHTML = ""; // Clear the container
+  container.style = null;
+  container.classList.add("fundraiserContainer");
+
+  container.style.display = "grid";
+  container.style.gridTemplateColumns = "1fr 1fr 1fr";
+  container.style.gap = "20px";
+  container.style.margin = "0 auto";
+  container.style.maxWidth = "1200px";
+  container.style.padding = "20px";
+
+  const signer = provider.getSigner();
+  console.log("Provider and signer initialized.");
+
+  const fundraiserFactory = new ethers.Contract(
+    fundraiserFactoryAddress,
+    fundraiserFactoryABI,
+    signer
+  );
+
   const now = new Date();
   let fundraisersFound = false;
 
-  details.forEach((detail) => {
+  const events = await fundraiserFactory.queryFilter(
+    fundraiserFactory.filters.FundraiserCreated(),
+    0,
+    "latest"
+  );
+
+  for (const detail of details) {
     const isFundraising = detail.finishTime > now;
 
     if (
@@ -251,118 +538,64 @@ async function renderFundraisers(details, container, state) {
       (state === "finished" && !isFundraising && !detail.isUsageUploaded)
     ) {
       fundraisersFound = true;
-
-      const item = document.createElement("div");
-      const postAddress = "post.html?contractAddress=" + detail.address;
-      item.id = "fundraiserBox";
-
-      if (detail.name.length >= 15) {
-        item.classList.add("tightSpacing");
-        console.log("long title", detail.name);
-      }
-
-      item.innerHTML = `
-            <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
-            <h2 class="fundraiser-title">${detail.name}</h2>
-            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
-            <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
-            `;
-      item.addEventListener("click", function () {
-        window.location.href = postAddress;
-      });
-      container.appendChild(item);
+      await renderFundraiserState(
+        "fundraising",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
     } else if (
       state === "usageUploaded" &&
       detail.isUsageUploaded &&
-      // detail.isZeroAddress
       (detail.isZeroAddress || (!detail.isZeroAddress && !detail.votingDone))
     ) {
       fundraisersFound = true;
-
-      const item = document.createElement("div");
-
-      if (detail.name.length >= 15) {
-        item.classList.add("tightSpacing");
-        console.log("long title", detail.name);
-      }
-
-      const postAddress =
-        "usageUploadedPost.html?contractAddress=" + detail.address;
-      item.id = "fundraiserBox";
-      item.innerHTML = `
-            <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
-            <h2 class="fundraiser-title">${detail.name}</h2>
-            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
-            <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
-            `;
-      item.addEventListener("click", function () {
-        window.location.href = postAddress;
-      });
-      container.appendChild(item);
+      await renderFundraiserState(
+        "usageUploaded",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
     } else if (
       state === "votingDone" &&
       !detail.isZeroAddress &&
       detail.votingDone
     ) {
       fundraisersFound = true;
-
-      const item = document.createElement("div");
-
-      if (detail.name.length >= 15) {
-        item.classList.add("tightSpacing");
-        console.log("long title", detail.name);
-      }
-
-      const postAddress =
-        "votingDonePost.html?contractAddress=" + detail.address;
-      item.id = "fundraiserBox";
-      item.innerHTML = `
-            <img class="donationBox" src="${detail.fundraiserImage}" title="donationBox">
-            <h2 class="fundraiser-title">${detail.name}</h2>
-            <p class="target-amount">Target Amount is <b>${detail.targetAmount}</b></p>
-            <p class="finish-date">Open until <b>${detail.finishTimeString}</b></p>
-            `;
-      item.addEventListener("click", function () {
-        window.location.href = postAddress;
-      });
-      container.appendChild(item);
+      await renderFundraiserState(
+        "votingDone",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
     }
-  });
+  }
 
-  if (!fundraisersFound && state === "fundraising") {
+  if (!fundraisersFound) {
     const message = document.createElement("h3");
     message.style.color = "#888";
     message.style.gridColumn = "1 / -1"; // 메시지를 전체 열에 걸치게 함
     message.style.textAlign = "center"; // 텍스트를 중앙 정렬
-    message.textContent = "모금 중인 모금함이 없어요.";
 
-    container.appendChild(message);
-  } else if (!fundraisersFound && state === "finished") {
-    const message = document.createElement("h3");
-    message.style.color = "#888";
-    message.style.gridColumn = "1 / -1"; // 메시지를 전체 열에 걸치게 함
-    message.style.textAlign = "center"; // 텍스트를 중앙 정렬
-    message.textContent = "모금 완료된 모금함이 없어요.";
+    const messageMapping = {
+      fundraising: "모금 중인 모금함이 없어요.",
+      finished: "모금 완료된 모금함이 없어요.",
+      usageUploaded: "증빙 완료된 모금함이 없어요.",
+      votingDone: "투표 완료된 모금함이 없어요.",
+    };
 
-    container.appendChild(message);
-  } else if (!fundraisersFound && state === "usageUploaded") {
-    const message = document.createElement("h3");
-    message.style.color = "#888";
-    message.style.gridColumn = "1 / -1"; // 메시지를 전체 열에 걸치게 함
-    message.style.textAlign = "center"; // 텍스트를 중앙 정렬
-    message.textContent = "증빙 완료된 모금함이 없어요.";
-
-    container.appendChild(message);
-  } else if (!fundraisersFound && state === "votingDone") {
-    const message = document.createElement("h3");
-    message.style.color = "#888";
-    message.style.gridColumn = "1 / -1"; // 메시지를 전체 열에 걸치게 함
-    message.style.textAlign = "center"; // 텍스트를 중앙 정렬
-    message.textContent = "투표 완료된 모금함이 없어요.";
-
+    message.textContent = messageMapping[state];
     container.appendChild(message);
   }
-  // Add back the grid display style to the container
   container.style.display = "grid";
   container.style.gridTemplateColumns = "1fr 1fr 1fr";
   container.style.gap = "20px";
