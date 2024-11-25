@@ -440,8 +440,6 @@ async function fetchAndDisplayFundraiserDetails(
     );
     console.log(`User's donation amount: ${donationAmount}`);
 
-    // 여기에 투표 결과
-
     // 페이지에 표시할 내용 생성
     const detailsDiv = document.getElementById("fundraiserDetails");
     detailsDiv.innerHTML = `
@@ -507,6 +505,10 @@ async function fetchAndDisplayFundraiserDetails(
       copyToClipboard(contractOwner);
     });
 
+    if (type != "commodity") {
+      const itemsContainer = document.querySelector(".items");
+      itemsContainer.style.display = "none";
+    }
     animation.endTask();
   } catch (error) {
     console.error("Error fetching contract details:", error);
@@ -590,6 +592,25 @@ async function fetchAndDisplayUsageDetails(
       await fetchIpfsData(data.hashes[i], i === 0);
     }
 
+    // 여기에 투표 결과
+    const results = await getVotingResults(contractAddress);
+    console.log("Voting Results:", results);
+
+    // 결과를 개별적으로 사용
+    const totalVotesForBigNumber = results.totalVotesFor; // BigNumber 객체
+    const totalVotesAgainstBigNumber = results.totalVotesAgainst; // BigNumber 객체
+
+    const denom = ethers.BigNumber.from("10").pow(9); // 오버플로우를 방지하기 위한 자리수 나누기
+
+    const totalVotesFor = totalVotesForBigNumber.div(denom).toNumber();
+    const totalVotesAgainst = totalVotesAgainstBigNumber.div(denom).toNumber();
+
+    let totalVotes = totalVotesFor + totalVotesAgainst;
+    if (totalVotes == 0) {
+      totalVotes = 1;
+    }
+    console.log(totalVotes);
+
     const usageDetailsDiv = document.getElementById("usageDetails");
     usageDetailsDiv.innerHTML = `
             <h1 class="fundraiserTitle">${name}</h1>
@@ -603,28 +624,53 @@ async function fetchAndDisplayUsageDetails(
                 <p class="creationTime">${creationDate}</p>
             </div>
 
+            <div class="voteTitle">투표 결과</div>
             <div class="fundraisingStatus">
-            <div class="raisedAmount"><b>${parseInt(
-              raisedAmount
-            ).toLocaleString()} GWEI</b> 후원되었어요</div>
-            <div class="progressPercentage">${(
-              (raisedAmount / targetAmount) *
-              100
-            ).toFixed(1)}%</div>
+            
+            <!-- 찬성, 반대 퍼센트 텍스트 -->
+            
+            <div class="percentageWrapper">
+            <div class="result for">
+                <span class="material-symbols-outlined icon">thumb_up</span>
+                <span>만족해요</span>
+                
             </div>
-            <div class="progressBarContainer">
+            <div class="result against">
+                <span class="material-symbols-outlined icon">thumb_down</span>
+                <span>아쉬워요</span>
+            </div>  
+            </div>
+            </div>
+
+            <div class="voteBarContainer">
                 <div class="progressBar" style="width: ${
-                  (raisedAmount / targetAmount) * 100
+                  (totalVotesFor / totalVotes) * 100
                 }%;"></div>
             </div>
-            <div class="supporterInfo">
-                <span class="targetAmount">${parseInt(
-                  targetAmount
-                ).toLocaleString()} GWEI 목표</span>
+            <div class="percentageWrapper">
+            <div class="result for">
+                <span class="forPercentage">${(
+                  (totalVotesFor / totalVotes) *
+                  100
+                ).toFixed(1)}%</span>
             </div>
+            <div class="result against">
+                <span class="againstPercentage">${(
+                  (totalVotesAgainst / totalVotes) *
+                  100
+                ).toFixed(1)}%</span>
+            </div>  
+            </div>
+
+        
             <div class="usageImages"></div>
             <p class="usageDescription"></p>
         `;
+    if (totalVotesFor + totalVotesAgainst == 0) {
+      document.querySelector(
+        ".voteBarContainer .progressBar"
+      ).style.backgroundColor = "#e0e0e0";
+    }
 
     // Once all data is fetched, display it
     displayTextData();

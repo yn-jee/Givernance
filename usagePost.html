@@ -43,10 +43,24 @@
                 </div>
                 <p class="imageCount">0/5</p>
             </div>
+            <div class="voteDurationInput">
+                <div class="voteDurationInputTitle">투표 기간</div>
+                <div class="voteDurationInputContainer">
+                    <input id="voteDurationInputField" 
+                           placeholder="투표 진행 기간을 설정하세요." 
+                           type="number" 
+                           class="voteDurationInputField">
+                    <select id="voteDurationUnit" class="voteDurationUnit">
+                        <option value="minutes" selected>분</option>
+                        <option value="hours">시간</option>
+                        <option value="days">일</option>
+                    </select>
+                </div>
+            </div>
             <div class="registerButtonContainer">
                 <button id="registerUsage">Register</button>
             </div>
-        </div>
+        </div>        
     </div>
     <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.5); align-items: center; justify-content: center; z-index: 1000;">
         <div id="loadingAnimation" style="width: 20%;"></div>

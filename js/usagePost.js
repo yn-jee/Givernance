@@ -165,6 +165,35 @@ async function displayImageData(images) {
     console.error("Error: .fundraiserImage element not found");
   }
 }
+// 투표 기간 (분 단위)
+let voteDurationInMinutes = 0;
+
+function updateVoteDuration() {
+  const durationValue = document.getElementById("voteDurationInputField").value; // 입력된 숫자 값
+  const durationUnit = document.getElementById("voteDurationUnit").value; // 선택된 단위
+
+  // 숫자 값이 비어 있으면 0으로 처리
+  const duration = parseInt(durationValue, 10) || 0;
+
+  // 단위를 기준으로 분 단위로 변환
+  if (durationUnit === "minutes") {
+    voteDurationInMinutes = duration; // 그대로 분 단위
+  } else if (durationUnit === "hours") {
+    voteDurationInMinutes = duration * 60; // 시간 -> 분
+  } else if (durationUnit === "days") {
+    voteDurationInMinutes = duration * 24 * 60; // 일 -> 분
+  }
+
+  console.log(`투표 기간: ${voteDurationInMinutes} 분`);
+}
+
+// 이벤트 리스너로 값 변경 시 실행
+document
+  .getElementById("voteDurationInputField")
+  .addEventListener("input", updateVoteDuration);
+document
+  .getElementById("voteDurationUnit")
+  .addEventListener("change", updateVoteDuration);
 
 async function fetchAndDisplayFundraiserDetails(
   provider,
@@ -567,6 +596,7 @@ async function fetchAndDisplayFundraiserDetails(
         });
         console.log(IpfsHashes);
 
+        animation.startTask();
         // interact w/ contract instance
         const IpfsContract = new ethers.Contract(
           usageRecordContract,
@@ -582,10 +612,11 @@ async function fetchAndDisplayFundraiserDetails(
 
         // Deploy GiversToken
         // 토큰을 생성할 모금함 주소, 투표 기간(분)
-        createGovernanceToken(contractAddress, 10);
+        createGovernanceToken(contractAddress, voteDurationInMinutes);
 
         getGovernanceToken(contractAddress);
 
+        animation.endTask();
         // window.location.href =
         //   window.location.protocol +
         //   "//" +

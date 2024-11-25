@@ -178,9 +178,10 @@ export async function getVotingResults(contractAddress) {
       await governanceTokenContract.getVotingResult();
 
     // 투표 결과 출력
-    alert(
+    console.log(
       `Total Votes For: ${totalVotesFor.toString()}, Total Votes Against: ${totalVotesAgainst.toString()}`
     );
+    return { totalVotesFor, totalVotesAgainst };
   } catch (error) {
     console.error("Failed to retrieve voting results:", error);
     alert(

@@ -170,9 +170,11 @@ async function fetchAllFundraiserDetails(fundraiserAddresses, provider) {
 
       const governanceTokenAddress = await getGovernanceToken(address);
       const zeroAddress = "0x0000000000000000000000000000000000000000";
-      let isVotingDone = false;
+      let isZeroAddress = true;
+      let votingDone = true;
       if (governanceTokenAddress.toLowerCase() !== zeroAddress.toLowerCase()) {
-        isVotingDone = await isVotingDone(address);
+        isZeroAddress = false;
+        votingDone = await isVotingDone(address);
       }
 
       return {
@@ -184,7 +186,8 @@ async function fetchAllFundraiserDetails(fundraiserAddresses, provider) {
         finishTimeString,
         raisedAmount,
         isUsageUploaded,
-        isVotingDone,
+        isZeroAddress,
+        votingDone,
       };
     })
   );
@@ -271,16 +274,18 @@ async function renderFundraisers(details, container, state) {
     } else if (
       state === "usageUploaded" &&
       detail.isUsageUploaded &&
-      !detail.isVotingDone
+      // detail.isZeroAddress
+      (detail.isZeroAddress || (!detail.isZeroAddress && !detail.votingDone))
     ) {
       fundraisersFound = true;
+
+      const item = document.createElement("div");
 
       if (detail.name.length >= 15) {
         item.classList.add("tightSpacing");
         console.log("long title", detail.name);
       }
 
-      const item = document.createElement("div");
       const postAddress =
         "usageUploadedPost.html?contractAddress=" + detail.address;
       item.id = "fundraiserBox";
@@ -294,15 +299,20 @@ async function renderFundraisers(details, container, state) {
         window.location.href = postAddress;
       });
       container.appendChild(item);
-    } else if (state === "usageUploaded" && detail.isVotingDone) {
+    } else if (
+      state === "votingDone" &&
+      !detail.isZeroAddress &&
+      detail.votingDone
+    ) {
       fundraisersFound = true;
+
+      const item = document.createElement("div");
 
       if (detail.name.length >= 15) {
         item.classList.add("tightSpacing");
         console.log("long title", detail.name);
       }
 
-      const item = document.createElement("div");
       const postAddress =
         "votingDonePost.html?contractAddress=" + detail.address;
       item.id = "fundraiserBox";
