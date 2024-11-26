@@ -667,9 +667,9 @@ async function fetchAndDisplayUsageDetails(
             <p class="usageDescription"></p>
         `;
     if (totalVotesFor + totalVotesAgainst == 0) {
-      document.querySelector(
-        ".voteBarContainer .progressBar"
-      ).style.backgroundColor = "#e0e0e0";
+      document.querySelector(".voteBarContainer").style.backgroundColor =
+        "#e0e0e0";
+      console.log("no vote");
     }
 
     // Once all data is fetched, display it

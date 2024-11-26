@@ -31,10 +31,13 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: 20px;
+  align-items: center;
+  padding-top: 20px;
 }
 
 .sidebar a {
   padding: 10px 15px;
+  border-radius: 50px;
   text-decoration: none;
   font-size: 16px;
   color: white;
@@ -73,7 +76,7 @@ body {
   background-color: #ffffff;
   width: calc(100% - 200px);
 }
-
+/* 
 #profileSection,
 #donationHistorySection,
 #walletSection {
@@ -83,7 +86,7 @@ body {
   background-color: #ffffff;
   border: 1px solid #556b2f;
   border-radius: 8px;
-}
+} */
 
 #fundraiserSection {
   display: flex;
@@ -246,4 +249,101 @@ input[type="text"] {
   color: #333333; /* 옵션 텍스트 색상 */
   padding: 10px;
   border-radius: 8px; /* 옵션 테두리 둥글게 */
+}
+
+/* 프로필 */
+
+/* .card-container {
+  margin: 0 auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 70%;
+  border: 2px solid darkolivegreen;
+  background-color: #fffff3;
+  border-radius: 30px;
+  align-self: auto;
+  align-items: center;
+
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0px 1px 10px 1px #000;
+  overflow: hidden;
+  display: inline-block;
+} */
+
+#profileSection {
+  overflow: hidden;
+}
+
+.horizontalLine {
+  width: 60%;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.profileContainer h1 {
+  color: #f0f0f0;
+}
+
+.profileContainer h3 {
+  color: rgb(255, 204, 213);
+}
+.upper-container {
+  height: 150px;
+  width: 200%;
+  background: darkolivegreen;
+  border-top: 5px darkolivegreen;
+}
+.image-container {
+  /* background: white; */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  padding: 5px;
+  /* transform: translate(100px, 100px); */
+}
+.image-container img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+}
+.lower-container {
+  height: 280px;
+  background: #fff;
+  padding: 20px;
+  padding-top: 40px;
+  text-align: center;
+}
+.lower-container h3,
+h4 {
+  box-sizing: border-box;
+  line-height: 0.4;
+  font-weight: 900;
+}
+.lower-container h4 {
+  color: #7f00ff;
+  opacity: 0.6;
+  font-weight: bold;
+}
+.lower-container p {
+  font-size: 16px;
+  color: gray;
+  margin-bottom: 30px;
+}
+.lower-container .btn {
+  padding: 12px 20px;
+  background: #7f00ff;
+  border: none;
+  color: white;
+  border-radius: 30px;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in;
+}
+.lower-container .btn:hover {
+  background: transparent;
+  color: #7f00ff;
+  border: 2px solid #7f00ff;
 }
