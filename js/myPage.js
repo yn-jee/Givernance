@@ -670,25 +670,31 @@ async function calculateReputationScore(provider, connectedWallets) {
       totalVotesFor = Number(totalVotesFor);
       totalVotesAgainst = Number(totalVotesAgainst);
 
-      // 평판 점수 계산
-      const P = totalVotesFor > totalVotesAgainst ? 1 : 3; // 긍정/부정 판단
-      const netVotes = totalVotesFor - totalVotesAgainst;
-      const totalWeight = totalVotesFor + totalVotesAgainst;
+      const netVotes = totalVotesFor - totalVotesAgainst; // 순수 투표 차이
+      const totalWeight = totalVotesFor + totalVotesAgainst; // 총 투표 수
 
       if (totalWeight === 0) {
         console.log(`모금함 ${fundraiser.address}의 투표가 없음`);
         continue;
       }
 
+      // 정규화된 차이값 계산
+      const scoreRatio = netVotes / totalWeight;
+      console.log(`Score Ratio for ${fundraiser.address}: ${scoreRatio}`);
+
+      // 데이터 저장
       votingResultsTemp.push({
         address: fundraiser.address,
         totalVotesFor: totalVotesFor,
         totalVotesAgainst: totalVotesAgainst,
+        scoreRatio: scoreRatio.toFixed(2), // 소수점 2자리 저장
       });
-      console.log("긍정: ", totalVotesFor, " 부정: ", totalVotesAgainst);
-      votingResultsDataRatio.push(totalVotesFor / totalWeight);
 
-      const currentScore = ((1 - alpha) * (netVotes * P)) / totalWeight;
+      // Ratio 추가
+      votingResultsDataRatio.push(scoreRatio); // 정규화된 값 추가
+
+      // 평판 점수 계산
+      const currentScore = (1 - alpha) * scoreRatio; // 이전 alpha 계수와 함께 사용
       reputationScore = alpha * reputationScore + currentScore;
 
       console.log(
@@ -697,41 +703,14 @@ async function calculateReputationScore(provider, connectedWallets) {
         }의 점수 계산 완료. 현재 점수: ${reputationScore.toFixed(2)}`
       );
 
+      // 평판 점수 저장
       reputationScoresTemp.push({
         address: fundraiser.address,
         score: reputationScore.toFixed(2),
       });
+
+      // 평판 점수 비율 업데이트
       reputationScoresRatio.push(reputationScore);
-
-      //   console.log(
-      //     `모금함 ${fundraiser.address} 투표 결과: 찬성 ${totalVotesFor}, 반대 ${totalVotesAgainst}`
-      //   );
-
-      //   // 긍정/부정 투표 판단
-      //   const P = totalVotesFor > totalVotesAgainst ? 1 : 3; // 결과에 따른 P 값
-      //   const netVotes = totalVotesFor - totalVotesAgainst; // 순수 투표 결과
-      //   const totalWeight = totalVotesFor + totalVotesAgainst; // 총 투표 수
-      //   console.log(totalWeight, "type: ", typeof totalWeight);
-
-      //   if (totalWeight === 0) {
-      //     console.log(
-      //       `모금함 ${fundraiser.address}의 투표가 없습니다. 생략합니다.`
-      //     );
-      //     continue;
-      //   }
-
-      //   // 현재 모금함 점수 계산
-      //   const currentScore = ((1 - alpha) * (netVotes * P)) / totalWeight;
-      //   reputationScore = alpha * reputationScore + currentScore; // 점수 업데이트
-
-      //   console.log(
-      //     `모금함 ${
-      //       fundraiser.address
-      //     }의 점수 계산 완료. 현재 점수: ${reputationScore.toFixed(2)}`
-      //   );
-      // }
-      // console.log("최종 평판 점수:", reputationScore);
-      // return reputationScore; // 최종 점수 반환
     }
 
     // 배열에 결과 저장
@@ -752,15 +731,38 @@ async function calculateReputationScore(provider, connectedWallets) {
     updateGraph(recentVotes, recentScores);
 
     const reputationScoreElement = document.querySelector(".reputationScore");
-
+    let latestReputationScore; // 현재 점수
     if (recentScores.length > 0) {
-      const latestReputationScore = recentScores[recentScores.length - 1]; // 최신 평판 점수 가져오기
+      latestReputationScore = recentScores[recentScores.length - 1]; // 최신 평판 점수 가져오기
       reputationScoreElement.textContent = `${latestReputationScore.toFixed(
         2
       )} points`;
     } else {
       reputationScoreElement.textContent = "0.00 points"; // 데이터가 없을 경우 기본값
     }
+
+    var averageReputationScore; // 평균 점수
+    let sum = 0;
+    for (let i = 0; i < reputationScoresRatio.length; i++) {
+      sum += reputationScoresRatio[i];
+    }
+    averageReputationScore = sum / reputationScoresRatio.length;
+
+    let positiveCount = 0;
+    let negativeCount = 0;
+    for (let i = 0; i < votingResultsDataRatio.length; i++) {
+      if (votingResultsDataRatio >= 0) positiveCount++;
+      else negativeCount++;
+    }
+
+    const reputationDescription = document.querySelector(
+      ".reputationDescription"
+    );
+    reputationDescription.innerHTML = `
+      <p>현재 <b>${latestReputationScore.toFixed(2)}</b>점,<br>
+      지금까지 평균 <b>${averageReputationScore.toFixed(2)}</b>점,<br>
+      긍정적인 평가를 받은 횟수 <b>${positiveCount}</b>회,<br>
+      부정적인 평가를 받은 횟수 <b>${negativeCount}</b>회입니다.</p>`;
   } catch (error) {
     console.error("평판 점수 계산 오류:", error);
   }
@@ -865,7 +867,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   fundraiserSection.style.display = "flex";
 
   menuItems.forEach((item) => {
-    item.addEventListener("click", function (event) {
+    item.addEventListener("click", async function (event) {
       event.preventDefault();
       sections.forEach((section) => (section.style.display = "none"));
       const activeSection = document.getElementById(
@@ -878,6 +880,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             "//" +
             window.location.host +
             "/index.html";
+        } else if (activeSection.id === "fundraiserMenu") {
+          await loadFundraisersForCurrentState(); // 페이지 다시 로딩
         }
         console.log(activeSection);
         activeSection.style.display = "flex";
