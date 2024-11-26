@@ -95,6 +95,12 @@ body {
   align-items: center;
 }
 
+#reputationSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .fundraiserContainer {
   display: grid;
   grid-template-columns: 1fr;
@@ -346,4 +352,197 @@ h4 {
   background: transparent;
   color: #7f00ff;
   border: 2px solid #7f00ff;
+}
+
+#reputationHeader {
+  font-weight: normal;
+}
+/* 그래프 */
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:600,400);
+
+.card {
+  /* position: absolute; */
+  height: 400px;
+  width: 500px;
+  background: #fff;
+  border-radius: 3px;
+  /* box-shadow: 10px 10px 15px 0 rgba(0, 0, 0, 0.3); */
+  overflow: hidden;
+}
+.card .header {
+  position: relative;
+  height: 60px;
+  width: 100%;
+  background: #f1ba64;
+  color: #fff;
+}
+.card .header .big {
+  position: absolute;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+.card .header .small {
+  position: absolute;
+  font-weight: 400;
+  font-size: 11px;
+}
+.card .header .title {
+  top: 12px;
+  left: 15px;
+}
+.card .header .date {
+  top: 30px;
+  left: 15px;
+}
+.card .header .type {
+  top: 14px;
+  right: 15px;
+}
+.card .header .value {
+  top: 28px;
+  right: 15px;
+}
+.card .parameter {
+  text-align: right;
+  padding: 10px 0 14px 0;
+}
+.card .parameter span {
+  position: relative;
+  font-size: 9px;
+  color: #606060;
+  line-height: 13px;
+  padding: 0 10px 0 25px;
+}
+.card .parameter span:before {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  display: block;
+  content: "";
+  width: 11px;
+  height: 3px;
+  border-radius: 3px;
+}
+.card .parameter .red:before {
+  background: #fa7373;
+}
+.card .parameter .blue:before {
+  background: #7ba2ff;
+}
+.card .statistic {
+  position: relative;
+  height: 65%;
+  width: 80%;
+  margin: 0 auto;
+}
+.card .statistic .line-1 {
+  position: inherit;
+  top: 0%;
+  height: 1px;
+  background: #d3d3d3;
+}
+
+.card .statistic .line-2 {
+  position: inherit;
+  top: 50%;
+  height: 1px;
+  background: #c4c4c4;
+}
+
+.card .statistic .line-3 {
+  position: inherit;
+  top: 100%;
+  height: 1px;
+  background: #d3d3d3;
+}
+
+.card .statistic .data svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.card .statistic .data polyline {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.card .statistic .data.red polyline {
+  stroke: #fa7373;
+}
+.card .statistic .data.blue polyline {
+  stroke: #7ba2ff;
+}
+.card .statistic .data .tooltip {
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  /* transform: translate3d(0, 10px, 0); */
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 11px;
+  color: #fff;
+  padding: 8px 6px;
+  border-radius: 3px;
+  visibility: hidden;
+  opacity: 0;
+  transition: transform 0.4s ease-out 0s, opacity 0.4s ease-out 0s;
+}
+.card .statistic .data .tooltip:after {
+  position: absolute;
+  display: block;
+  content: "";
+  height: 6px;
+  width: 6px;
+  left: 50%;
+  margin-left: -3px;
+  bottom: -3px;
+  transform: rotate(45deg);
+}
+.card .statistic .data [class^="point-"] {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  z-index: 10;
+}
+.card .statistic .data [class^="point-"]:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+.card .statistic .data.red [class^="point-"],
+.card .statistic .data.red .tooltip,
+.card .statistic .data.red .tooltip:after {
+  background: #fa7373;
+}
+
+.card .statistic .data [class^="point-"] {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  z-index: 10;
+}
+.card .statistic .data .tooltip {
+  position: absolute;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 11px;
+  color: #fff;
+  padding: 8px 6px;
+  border-radius: 3px;
+  visibility: hidden;
+  opacity: 0;
+  transition: transform 0.4s ease-out 0s, opacity 0.4s ease-out 0s;
+}
+
+.card .statistic .data.blue [class^="point-"],
+.card .statistic .data.blue .tooltip,
+.card .statistic .data.blue .tooltip:after {
+  background: #7ba2ff;
 }

@@ -41,7 +41,7 @@
             <img src="images/IMG_9003.jpeg" />
         </div>
         <h1 class="userName">양이</h1>
-        <h3 class="reputationScore">0.92 point</h3>
+        <h3 class="reputationScore">0.00 point</h3>
       </div>
       <div class="horizontalLine"></div>
       <div class="createFundraiserButton">
@@ -55,7 +55,7 @@
 
     <div class="mainContainer">
       <div class="mainContent">
-        <section id="profileSection">
+        <section id="profileSection" style="display: none">
             <div class="card-container">
 
                 <div class="upper-container">
@@ -134,6 +134,41 @@
           </div>
         </section>
 
+        <section id="reputationSection" style="display: none">
+            <!-- <canvas id="scoreGraph" width="400" height="200"></canvas> -->
+            <h2 id="reputationHeader"><b>양이</b>님의 평판 점수</h2>
+            
+            <!-- 그래프 표시 영역 -->
+            <div class="card">
+                <div class="header">
+                <span class="title big">Voting Report</span>
+                <span class="date small">최근 5개의 데이터</span>
+                </div>
+                <div class="clearfix"></div>
+                <div class="parameter">
+                <span class="red">투표 결과</span>
+                <span class="blue">평판 점수</span>
+                </div>
+                <div class="statistic">
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="data red">
+                    <svg>
+                    <polyline id="positive-points" points=""></polyline>
+                    </svg>
+                    <div class="points" id="positive-tooltips"></div>
+                </div>
+                <div class="data blue">
+                    <svg>
+                    <polyline id="reputation-points" points=""></polyline>
+                    </svg>
+                    <div class="points" id="reputation-tooltips"></div>
+                </div>
+                </div>
+            </div>
+          </section>
+
         <section id="donationHistorySection" style="display: none">
           <h2>Donation History</h2>
           <ul id="donationHistoryList">
@@ -147,6 +182,7 @@
         <div id="loadingAnimation" style="width: 20%;"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="js/myPage.js"></script>
   </body>
 </html>

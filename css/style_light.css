@@ -1342,7 +1342,7 @@ form {
 
 .voteBarContainer {
   background-color: #ff6828;
-  border-radius: 5px;
+  border-radius: 20px;
   overflow: hidden;
   height: 30px;
   margin: 10px 0;

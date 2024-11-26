@@ -544,6 +544,298 @@ async function detectWallets(walletSelector) {
   return selectedWallet;
 }
 
+async function fetchAllWallets(walletSelector) {
+  let selectedWallets = []; // 선택된 지갑 리스트
+
+  if (window.ethereum) {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts", // 모든 연결된 지갑 주소 가져오기
+      });
+
+      walletSelector.innerHTML = ""; // 기존 옵션 제거
+      accounts.forEach((account) => {
+        const option = document.createElement("option");
+        option.value = account;
+        option.textContent = account;
+        walletSelector.appendChild(option);
+      });
+
+      // 모든 지갑 주소 배열에 추가
+      selectedWallets = accounts;
+
+      console.log("선택된 지갑 주소들:", selectedWallets);
+
+      // 지갑 선택 이벤트 핸들러 추가 (선택된 주소 변경 시 출력)
+      walletSelector.addEventListener("change", function () {
+        console.log("Wallet changed to:", this.value);
+      });
+    } catch (error) {
+      console.error("지갑 탐지 중 오류 발생:", error);
+    }
+  } else {
+    alert("MetaMask 또는 기타 Ethereum 지갑을 설치해주세요.");
+  }
+
+  return selectedWallets; // 모든 지갑 주소를 배열로 반환
+}
+
+// 평판 점수와 투표 결과를 저장할 배열
+let reputationScores = [];
+let votingResultsData = [];
+let reputationScoresRatio = [];
+let votingResultsDataRatio = [];
+
+async function calculateReputationScore(provider, connectedWallets) {
+  try {
+    const reputationScoresTemp = []; // 임시 평판 점수 저장
+    const votingResultsTemp = []; // 임시 투표 결과 저장
+
+    // 1. 내가 생성한 모금함 가져오기
+    const fundraiserAddresses = await fetchAllEventsFromContract(provider); // 모든 모금함 가져오기
+
+    const myFundraisers = []; // 내가 생성한 모금함 리스트
+    const events = await getEvents(provider, fundraiserFactoryAddress);
+
+    for (const address of fundraiserAddresses) {
+      for (const wallet of connectedWallets) {
+        const targetEvent = await getTargetEvent(provider, events, address);
+
+        // 모든 트랜잭션 가져오기
+        const creatorAddress = await getFundraiserCreatorAddresses(
+          provider,
+          targetEvent,
+          address
+        );
+
+        if (
+          creatorAddress &&
+          creatorAddress.toLowerCase() === wallet.toLowerCase()
+        ) {
+          const governanceTokenAddress = await getGovernanceToken(address);
+
+          // Governance Token Address가 0x000...000인지 확인
+          if (
+            governanceTokenAddress === ethers.constants.AddressZero ||
+            !governanceTokenAddress
+          ) {
+            console.log(`모금함 ${address}의 Governance Token이 존재하지 않음`);
+            continue;
+          }
+
+          const isDone = await isVotingDone(address); // 투표 완료 여부 확인
+          console.log(`모금함 ${address}의 투표 완료 여부: ${isDone}`);
+
+          if (isDone) {
+            const blockNumber = targetEvent.blockNumber; // 이벤트의 블록 번호 가져오기
+            myFundraisers.push({ address, blockNumber });
+          }
+        }
+      }
+    }
+
+    // 2. 오래된 순으로 정렬
+    myFundraisers.sort((a, b) => a.blockNumber - b.blockNumber);
+    console.log("내가 생성한 모금함 리스트:", myFundraisers);
+
+    // 3. 평판 점수 계산
+    let reputationScore = 0; // 초기 평판 점수
+    const alpha = 0.7; // 이전 점수 영향도
+
+    for (const fundraiser of myFundraisers) {
+      console.log(`현재 모금함 주소: ${fundraiser.address}`);
+
+      const governanceTokenAddress = await getGovernanceToken(
+        fundraiser.address
+      );
+      console.log(
+        `모금함 ${fundraiser.address}의 Governance Token 주소: ${governanceTokenAddress}`
+      );
+
+      // Governance Token Address가 0x000...000인지 확인
+      if (
+        governanceTokenAddress === ethers.constants.AddressZero ||
+        !governanceTokenAddress
+      ) {
+        console.log(
+          `모금함 ${fundraiser.address}의 Governance Token이 존재하지 않음`
+        );
+        continue;
+      }
+
+      var { totalVotesFor, totalVotesAgainst } = await getVotingResults(
+        fundraiser.address
+      );
+      totalVotesFor = Number(totalVotesFor);
+      totalVotesAgainst = Number(totalVotesAgainst);
+
+      // 평판 점수 계산
+      const P = totalVotesFor > totalVotesAgainst ? 1 : 3; // 긍정/부정 판단
+      const netVotes = totalVotesFor - totalVotesAgainst;
+      const totalWeight = totalVotesFor + totalVotesAgainst;
+
+      if (totalWeight === 0) {
+        console.log(`모금함 ${fundraiser.address}의 투표가 없음`);
+        continue;
+      }
+
+      votingResultsTemp.push({
+        address: fundraiser.address,
+        totalVotesFor: totalVotesFor,
+        totalVotesAgainst: totalVotesAgainst,
+      });
+      console.log("긍정: ", totalVotesFor, " 부정: ", totalVotesAgainst);
+      votingResultsDataRatio.push(totalVotesFor / totalWeight);
+
+      const currentScore = ((1 - alpha) * (netVotes * P)) / totalWeight;
+      reputationScore = alpha * reputationScore + currentScore;
+
+      console.log(
+        `모금함 ${
+          fundraiser.address
+        }의 점수 계산 완료. 현재 점수: ${reputationScore.toFixed(2)}`
+      );
+
+      reputationScoresTemp.push({
+        address: fundraiser.address,
+        score: reputationScore.toFixed(2),
+      });
+      reputationScoresRatio.push(reputationScore);
+
+      //   console.log(
+      //     `모금함 ${fundraiser.address} 투표 결과: 찬성 ${totalVotesFor}, 반대 ${totalVotesAgainst}`
+      //   );
+
+      //   // 긍정/부정 투표 판단
+      //   const P = totalVotesFor > totalVotesAgainst ? 1 : 3; // 결과에 따른 P 값
+      //   const netVotes = totalVotesFor - totalVotesAgainst; // 순수 투표 결과
+      //   const totalWeight = totalVotesFor + totalVotesAgainst; // 총 투표 수
+      //   console.log(totalWeight, "type: ", typeof totalWeight);
+
+      //   if (totalWeight === 0) {
+      //     console.log(
+      //       `모금함 ${fundraiser.address}의 투표가 없습니다. 생략합니다.`
+      //     );
+      //     continue;
+      //   }
+
+      //   // 현재 모금함 점수 계산
+      //   const currentScore = ((1 - alpha) * (netVotes * P)) / totalWeight;
+      //   reputationScore = alpha * reputationScore + currentScore; // 점수 업데이트
+
+      //   console.log(
+      //     `모금함 ${
+      //       fundraiser.address
+      //     }의 점수 계산 완료. 현재 점수: ${reputationScore.toFixed(2)}`
+      //   );
+      // }
+      // console.log("최종 평판 점수:", reputationScore);
+      // return reputationScore; // 최종 점수 반환
+    }
+
+    // 배열에 결과 저장
+    reputationScores = [...reputationScoresTemp];
+    votingResultsData = [...votingResultsTemp];
+
+    console.log("평판 점수 목록:", reputationScores);
+    console.log("투표 결과 목록:", votingResultsData);
+
+    console.log("평판 점수 비율 목록:", reputationScoresRatio);
+    console.log("투표 결과 비율 목록:", votingResultsDataRatio);
+
+    // 최근 5개의 데이터 추출
+    const recentScores = reputationScoresRatio.slice(-5);
+    const recentVotes = votingResultsDataRatio.slice(-5);
+
+    // 그래프 생성
+    updateGraph(recentVotes, recentScores);
+
+    const reputationScoreElement = document.querySelector(".reputationScore");
+
+    if (recentScores.length > 0) {
+      const latestReputationScore = recentScores[recentScores.length - 1]; // 최신 평판 점수 가져오기
+      reputationScoreElement.textContent = `${latestReputationScore.toFixed(
+        2
+      )} points`;
+    } else {
+      reputationScoreElement.textContent = "0.00 points"; // 데이터가 없을 경우 기본값
+    }
+  } catch (error) {
+    console.error("평판 점수 계산 오류:", error);
+  }
+}
+
+// 그래프 y축 그리기
+function updateGraphLines() {
+  const statisticElement = document.querySelector(".card .statistic");
+  const line1 = document.querySelector(".line-1");
+  const line2 = document.querySelector(".line-2");
+  const line3 = document.querySelector(".line-3");
+
+  const graphHeight = 260; // 그래프 높이 가져오기
+
+  // 동적으로 세 줄 위치 설정
+  line1.style.top = `0%`; // 위쪽 선 (25%)
+  line2.style.top = `50%`; // 중간 선 (50%)
+  line3.style.top = `100%`; // 아래쪽 선 (75%)
+}
+
+function updateGraph(positiveVoteRatios, reputationScores) {
+  const positivePolyline = document.getElementById("positive-points");
+  const reputationPolyline = document.getElementById("reputation-points");
+  const positiveTooltips = document.getElementById("positive-tooltips");
+  const reputationTooltips = document.getElementById("reputation-tooltips");
+  const xAxisLabels = document.getElementById("x-axis-labels");
+
+  const statisticElement = document.querySelector(".card .statistic");
+  const svgWidth = 400; // 그래프 너비
+  const svgHeight = 260; // 그래프 높이
+  const maxPoints = 5; // 최대 점의 수
+  const xStep = svgWidth / (maxPoints - 1); // X축 간격 계산
+
+  const normalizeY = (value) => svgHeight / 2 - value * (svgHeight / 2);
+
+  let positivePoints = "";
+  let reputationPoints = "";
+  let positiveTooltipContent = "";
+  let reputationTooltipContent = "";
+  let xLabelsContent = "";
+
+  for (let i = 0; i < positiveVoteRatios.length; i++) {
+    const x = i * xStep; // X좌표 계산
+    const yPositive = normalizeY(positiveVoteRatios[i]);
+    const yReputation = normalizeY(reputationScores[i]);
+
+    positivePoints += `${x},${yPositive} `;
+    reputationPoints += `${x},${yReputation} `;
+
+    positiveTooltipContent += `
+      <div class="point-${i + 1}" style="left: ${x}px; top: ${
+      yPositive - 10
+    }px;">
+        <div class="tooltip">${(positiveVoteRatios[i] * 100).toFixed(1)}%</div>
+      </div>`;
+    reputationTooltipContent += `
+      <div class="point-${i + 1}" style="left: ${x}px; top: ${
+      yReputation - 10
+    }px;">
+        <div class="tooltip">${reputationScores[i].toFixed(2)}</div>
+      </div>`;
+
+    xLabelsContent += `<span class="day" style="left: ${x}px;">#${
+      i + 1
+    }</span>`;
+  }
+
+  positivePolyline.setAttribute("points", positivePoints.trim());
+  reputationPolyline.setAttribute("points", reputationPoints.trim());
+  positiveTooltips.innerHTML = positiveTooltipContent;
+  reputationTooltips.innerHTML = reputationTooltipContent;
+
+  // updateGraphLines(); // 세 줄의 위치 동적 계산
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   var createFundraiserButton = document.getElementById(
     "createFundraiserButton"
@@ -560,12 +852,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   const sections = document.querySelectorAll(".mainContent section");
   const walletSelector = document.getElementById("walletSelector");
   const fundraisersList = document.getElementById("myFundraisersList");
+  const selectedWallets = await detectWallets(walletSelector);
   let selectedWallet;
 
   selectedWallet = await detectWallets(walletSelector);
   console.log("Selected wallet after detection:", selectedWallet);
 
-  const fundraiserSection = document.getElementById("profileSection");
+  const connectedWallets = await fetchAllWallets(walletSelector);
+  console.log("Wallet list:", connectedWallets);
+
+  const fundraiserSection = document.getElementById("fundraiserSection");
   fundraiserSection.style.display = "flex";
 
   menuItems.forEach((item) => {
@@ -622,6 +918,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 페이지 초기 로드 시 데이터를 불러옴
     await loadFundraisersForCurrentState();
+
+    // 평판 점수 계산
+    await calculateReputationScore(provider, connectedWallets);
 
     // 라디오 버튼 변경 이벤트 처리
     document
