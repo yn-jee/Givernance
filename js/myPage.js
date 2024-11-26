@@ -759,10 +759,10 @@ async function calculateReputationScore(provider, connectedWallets) {
       ".reputationDescription"
     );
     reputationDescription.innerHTML = `
-      <p>현재 <b>${latestReputationScore.toFixed(2)}</b>점,<br>
-      지금까지 평균 <b>${averageReputationScore.toFixed(2)}</b>점,<br>
-      긍정적인 평가를 받은 횟수 <b>${positiveCount}</b>회,<br>
-      부정적인 평가를 받은 횟수 <b>${negativeCount}</b>회입니다.</p>`;
+      <p>현재 <b>${latestReputationScore.toFixed(2)}점</b>,<br>
+      지금까지 평균 <b>${averageReputationScore.toFixed(2)}점</b>,<br>
+      긍정적인 평가를 받은 횟수 <b>${positiveCount}회</b>,<br>
+      부정적인 평가를 받은 횟수 <b>${negativeCount}회</b>입니다.</p>`;
   } catch (error) {
     console.error("평판 점수 계산 오류:", error);
   }
