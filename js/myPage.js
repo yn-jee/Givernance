@@ -753,8 +753,8 @@ async function calculateReputationScore(provider, connectedWallets) {
     let positiveCount = 0;
     let negativeCount = 0;
     for (let i = 0; i < votingResultsDataRatio.length; i++) {
-      if (votingResultsDataRatio >= 0) positiveCount++;
-      else negativeCount++;
+      if (votingResultsDataRatio >= 0) negativeCount++;
+      else positiveCount++;
     }
 
     const reputationDescription = document.querySelector(
