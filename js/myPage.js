@@ -688,7 +688,7 @@ async function calculateReputationScore(provider, connectedWallets) {
       }
 
       // 정규화된 차이값 계산
-      const scoreRatio = netVotes / totalWeight;
+      const scoreRatio = totalVotesFor / totalWeight;
       console.log(`Score Ratio for ${fundraiser.address}: ${scoreRatio}`);
 
       // 데이터 저장
@@ -760,7 +760,8 @@ async function calculateReputationScore(provider, connectedWallets) {
     let positiveCount = 0;
     let negativeCount = 0;
     for (let i = 0; i < votingResultsDataRatio.length; i++) {
-      if (votingResultsDataRatio >= 0.5) positiveCount++;
+      console.log("결과:", votingResultsDataRatio[i]);
+      if (votingResultsDataRatio[i] >= 0.5) positiveCount++;
       else negativeCount++;
     }
 
@@ -1044,11 +1045,11 @@ document.addEventListener("DOMContentLoaded", async function () {
               provider,
               sectionId,
               lastSelection,
-              wallet
+              connectedWallets[0]
             );
 
             // 모든 렌더링 작업 완료 후 fundraiserBox 확인
-            await Promise.all(renderPromises);
+            await renderPromises;
 
             const fundraiserBoxes =
               container.querySelectorAll("#fundraiserBox");
@@ -1132,7 +1133,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               // );
 
               // 모든 렌더링 작업이 끝난 후 fundraiserBox를 확인
-              await Promise.all(renderPromises);
+              await renderPromises;
 
               const fundraiserBoxes =
                 container.querySelectorAll("#fundraiserBox");
