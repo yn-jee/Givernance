@@ -617,18 +617,28 @@ async function fetchAndDisplayFundraiserDetails(
         getGovernanceToken(contractAddress);
 
         animation.endTask();
-        // window.location.href =
-        //   window.location.protocol +
-        //   "//" +
-        //   window.location.host +
-        //   "/usageUploadedPost.html?contractAddress=" +
-        //   contractAddress;
+        window.location.href =
+          window.location.protocol +
+          "//" +
+          window.location.host +
+          "/usageUploadedPost.html?contractAddress=" +
+          contractAddress;
       } catch (error) {
         console.error("Error uploading file:", error);
         alert("Error uploading file");
       }
 
       animation.endTask();
+    });
+
+  document
+    .getElementById("governanceTest")
+    .addEventListener("click", async function () {
+      console.log(voteDurationInMinutes);
+
+      createGovernanceToken(contractAddress, voteDurationInMinutes);
+
+      getGovernanceToken(contractAddress);
     });
 }
 

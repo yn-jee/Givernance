@@ -49,8 +49,8 @@
       </div>
       <a href="#" id="fundraiserMenu">내 모금함</a>
       <a href="#" id="reputationMenu">평판 점수</a>
-      <a href="#" id="donationMenu">후원 내역</a>
-      <a href="#" id="profileMenu">프로필</a>
+      <a href="#" id="donationHistoryMenu">후원한 모금함</a>
+      <!-- <a href="#" id="profileMenu">프로필</a> -->
     </div>
 
     <div class="mainContainer">
@@ -179,10 +179,33 @@
           </section>
 
         <section id="donationHistorySection" style="display: none">
-          <h2>Donation History</h2>
-          <ul id="donationHistoryList">
-            <!-- Dynamic content will be loaded here -->
-          </ul>
+          <h2>후원한 모금함</h2>
+          <div class="buttonContainer" style="margin-top: 20px;">
+            <label>
+              <input type="radio" name="fundraiserState" value="fundraising" checked/>
+              <span>모금중</span>
+            </label>
+            <label>
+              <input type="radio" name="fundraiserState" value="finished"/>
+              <span>모금완료</span>
+            </label>
+            <label>
+              <input type="radio" name="fundraiserState" value="usageUploaded"/>
+              <span>증빙완료</span>
+            </label>
+            <label>
+              <input type="radio" name="fundraiserState" value="votingDone"/>
+              <span>투표완료</span>
+            </label>
+          </div>
+          <div class="donationHistoryContainer" style="
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 20px;
+          margin: 0px auto;
+          max-width: 1200px;
+          padding: 20px;">
+          </div>
         </section>
       </div>
     </div>

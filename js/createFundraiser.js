@@ -700,7 +700,7 @@ function setupRadioButtons() {
         break;
       case "monetary":
         descriptionText.innerHTML =
-          "큰 규모의 모금에 적합한 일회성 모금함입니다. 추후 계획에 변경 사항이 생긴다면, 후원자의 투표에 따라 계획을 변경할 수 있습니다.";
+          "큰 규모의 모금에 적합한 일회성 모금함입니다.";
         commodityContainer.style.display = "none";
         commodityContainerTitle.style.display = "none";
         fundraiserTargetAmount.value = "";

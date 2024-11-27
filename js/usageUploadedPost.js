@@ -499,20 +499,15 @@ async function fetchAndDisplayFundraiserDetails(
         console.log("선택된 옵션:", selectedVote ? "만족해요" : "아쉬워요");
         console.log(contractAddress);
         if (selectedVote) {
-          animation.startTask();
           castVote(contractAddress, true);
-          animation.endTask();
         } else {
-          animation.startTask();
           castVote(contractAddress, false);
-          animation.endTask();
         }
 
         modal.style.animation = "fadeOut 0.2s";
       } catch (error) {
         console.error("투표 실패:", error);
         alert("투표에 실패했습니다. 다시 시도해주세요.");
-        animation.endTask();
       }
     });
 

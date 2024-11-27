@@ -3,6 +3,7 @@ import {
   governanceManagerABI,
   governanceABI,
 } from "./governanceConfig.js";
+import { LoadingAnimation } from "./LoadingAnimation.js";
 
 import { ethers } from "https://unpkg.com/ethers@5.7.2/dist/ethers.esm.min.js";
 
@@ -76,9 +77,11 @@ export async function getGovernanceToken(fundraiserAddress) {
 export async function castVote(contractAddress, voteFor) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
+  const animation = new LoadingAnimation("../images/loadingAnimation.json");
 
   try {
     // GovernanceManager 컨트랙트 주소가 유효한지 확인
+    animation.startTask();
     if (!ethers.utils.isAddress(governanceManagerAddress)) {
       console.error(
         "Invalid Governance Manager Address:",
@@ -129,7 +132,9 @@ export async function castVote(contractAddress, voteFor) {
     // 트랜잭션 완료 대기
     await tx.wait();
     alert("Vote cast successfully!");
+    animation.endTask();
   } catch (error) {
+    animation.endTask();
     console.error("Voting failed:", error);
 
     // 오류 처리
