@@ -398,6 +398,13 @@ async function renderFundraisers(
   container.style.maxWidth = "960px";
   container.style.padding = "20px";
 
+  const uniqueDetails = details.filter(
+    (detail, index, self) =>
+      index === self.findIndex((d) => d.address === detail.address)
+  );
+
+  console.log("Rendering fundraisers:", uniqueDetails.length);
+
   const signer = provider.getSigner();
   console.log("Provider and signer initialized.");
 
@@ -416,72 +423,72 @@ async function renderFundraisers(
     "latest"
   );
 
-  const myFundraisers = [];
-  for (const event of events) {
-    const fundraiserAddress = event.args.fundraiserAddress;
+  // const myFundraisers = [];
+  // for (const event of events) {
+  //   const fundraiserAddress = event.args.fundraiserAddress;
 
-    // Check the creator of this fundraiser
-    const transaction = await provider.getTransaction(event.transactionHash);
-    const creatorAddress = transaction.from;
+  //   // Check the creator of this fundraiser
+  //   const transaction = await provider.getTransaction(event.transactionHash);
+  //   const creatorAddress = transaction.from;
 
-    if (creatorAddress.toLowerCase() === selectedWallet.toLowerCase()) {
-      myFundraisers.push(fundraiserAddress);
-    }
-  }
+  //   if (creatorAddress.toLowerCase() === selectedWallet.toLowerCase()) {
+  //     myFundraisers.push(fundraiserAddress);
+  //   }
+  // }
 
   for (const detail of details) {
     const isFundraising = detail.finishTime > now;
-    const isAddressInArray = myFundraisers.some(
-      (address) => address.toLowerCase() === detail.address.toLowerCase()
-    );
+    // const isAddressInArray = myFundraisers.some(
+    //   (address) => address.toLowerCase() === detail.address.toLowerCase()
+    // );
 
-    if (isAddressInArray) {
-      if (
-        (state === "fundraising" && isFundraising) ||
-        (state === "finished" && !isFundraising && !detail.isUsageUploaded)
-      ) {
-        fundraisersFound = true;
-        await renderFundraiserState(
-          "fundraising",
-          detail,
-          provider,
-          signer,
-          selectedWallet,
-          container,
-          fundraiserFactoryAddress
-        );
-      } else if (
-        state === "usageUploaded" &&
-        detail.isUsageUploaded &&
-        (detail.isZeroAddress || (!detail.isZeroAddress && !detail.votingDone))
-      ) {
-        fundraisersFound = true;
-        await renderFundraiserState(
-          "usageUploaded",
-          detail,
-          provider,
-          signer,
-          selectedWallet,
-          container,
-          fundraiserFactoryAddress
-        );
-      } else if (
-        state === "votingDone" &&
-        !detail.isZeroAddress &&
-        detail.votingDone
-      ) {
-        fundraisersFound = true;
-        await renderFundraiserState(
-          "votingDone",
-          detail,
-          provider,
-          signer,
-          selectedWallet,
-          container,
-          fundraiserFactoryAddress
-        );
-      }
+    // if (isAddressInArray) {
+    if (
+      (state === "fundraising" && isFundraising) ||
+      (state === "finished" && !isFundraising && !detail.isUsageUploaded)
+    ) {
+      fundraisersFound = true;
+      await renderFundraiserState(
+        "fundraising",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
+    } else if (
+      state === "usageUploaded" &&
+      detail.isUsageUploaded &&
+      (detail.isZeroAddress || (!detail.isZeroAddress && !detail.votingDone))
+    ) {
+      fundraisersFound = true;
+      await renderFundraiserState(
+        "usageUploaded",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
+    } else if (
+      state === "votingDone" &&
+      !detail.isZeroAddress &&
+      detail.votingDone
+    ) {
+      fundraisersFound = true;
+      await renderFundraiserState(
+        "votingDone",
+        detail,
+        provider,
+        signer,
+        selectedWallet,
+        container,
+        fundraiserFactoryAddress
+      );
     }
+    // }
   }
 
   if (!fundraisersFound) {
@@ -753,8 +760,8 @@ async function calculateReputationScore(provider, connectedWallets) {
     let positiveCount = 0;
     let negativeCount = 0;
     for (let i = 0; i < votingResultsDataRatio.length; i++) {
-      if (votingResultsDataRatio >= 0) negativeCount++;
-      else positiveCount++;
+      if (votingResultsDataRatio >= 0.5) positiveCount++;
+      else negativeCount++;
     }
 
     const reputationDescription = document.querySelector(
@@ -932,6 +939,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const supportedDetails = details.filter((detail) =>
       supportedFundraiserAddresses.includes(detail.address)
     );
+    console.log(supportedDetails);
 
     // 생성한 모금함을 지갑별로 분류
     connectedWallets.forEach((wallet) => {
@@ -1024,6 +1032,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           radioButton.checked = true;
           animation.startTask();
           // 후원한 모금함 섹션 처리
+          // 후원한 모금함 섹션 처리
           if (sectionId === "donationHistorySection") {
             container.innerHTML = ""; // 컨테이너 초기화
             console.log(
@@ -1085,6 +1094,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     // 라디오 버튼 변경 시 처리
+    // 라디오 버튼 변경 시 처리
     document
       .querySelectorAll('input[name="fundraiserState"]')
       .forEach((radio) => {
@@ -1107,15 +1117,21 @@ document.addEventListener("DOMContentLoaded", async function () {
                 `Rendering supported fundraisers for ${this.value} in ${sectionId}`
               );
 
-              // 모든 지갑에 대해 비동기 작업 수행
-              const renderPromises = connectedWallets.map(async (wallet) =>
-                renderFundraisersByState(
-                  provider,
-                  sectionId,
-                  this.value,
-                  wallet
-                )
+              // 한 개의 지갑에 대해 비동기 작업 수행(지갑을 구분하지 않음)
+              const renderPromises = renderFundraisersByState(
+                provider,
+                sectionId,
+                this.value,
+                connectedWallets[0]
               );
+              // const renderPromises = connectedWallets.map(async (wallet) =>
+              //   renderFundraisersByState(
+              //     provider,
+              //     sectionId,
+              //     this.value,
+              //     wallet
+              //   )
+              // );
 
               // 모든 렌더링 작업이 끝난 후 fundraiserBox를 확인
               await Promise.all(renderPromises);
