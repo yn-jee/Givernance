@@ -1040,13 +1040,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             );
 
             // 모든 지갑에 대해 비동기 작업 수행
-            const renderPromises = connectedWallets.map(async (wallet) =>
-              renderFundraisersByState(
-                provider,
-                sectionId,
-                lastSelection,
-                wallet
-              )
+            const renderPromises = renderFundraisersByState(
+              provider,
+              sectionId,
+              lastSelection,
+              wallet
             );
 
             // 모든 렌더링 작업 완료 후 fundraiserBox 확인
