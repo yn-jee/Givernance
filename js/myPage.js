@@ -688,7 +688,7 @@ async function calculateReputationScore(provider, connectedWallets) {
       }
 
       // 정규화된 차이값 계산
-      const scoreRatio = totalVotesFor / totalWeight;
+      const scoreRatio = netVotes / totalWeight;
       console.log(`Score Ratio for ${fundraiser.address}: ${scoreRatio}`);
 
       // 데이터 저장
@@ -761,7 +761,7 @@ async function calculateReputationScore(provider, connectedWallets) {
     let negativeCount = 0;
     for (let i = 0; i < votingResultsDataRatio.length; i++) {
       console.log("결과:", votingResultsDataRatio[i]);
-      if (votingResultsDataRatio[i] >= 0.5) positiveCount++;
+      if (votingResultsDataRatio[i] >= 0) positiveCount++;
       else negativeCount++;
     }
 
