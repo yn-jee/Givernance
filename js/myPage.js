@@ -22,6 +22,42 @@ import { ethers } from "https://unpkg.com/ethers@5.7.2/dist/ethers.esm.min.js";
 const IpfsGateway = "https://purple-careful-ladybug-259.mypinata.cloud/ipfs/";
 const animation = new LoadingAnimation("../images/loadingAnimation.json");
 
+const jsonFilePath = `/images/UserNameData.json`; // 상대 경로가 아니라 URL 경로로 접근
+const imageFilePath = `/images/UserProfileImage.jpg`; // HTTP 서버 기준 경로
+
+console.log(imageFilePath);
+
+// HTML 요소를 업데이트하는 함수
+function updateHTML(userName, imagePath) {
+  const userNameElement = document.querySelector(".userName");
+  if (userNameElement) {
+    userNameElement.textContent = userName;
+  }
+
+  const imageElement = document.querySelector(".image-container img");
+  if (imageElement) {
+    imageElement.src = imagePath;
+  }
+}
+
+// JSON 파일과 이미지 파일 경로를 가져오는 함수
+function loadUserData() {
+  fetch(jsonFilePath) // file:// 대신 HTTP URL 사용
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const userName = data.userName; // JSON에서 사용자 이름 가져오기
+      updateHTML(userName, imageFilePath);
+    })
+    .catch((error) => {
+      console.error("Error loading user data:", error);
+    });
+}
+
 async function checkIfImage(url) {
   try {
     const response = await fetch(url, { method: "HEAD" }); // HEAD 요청으로 Content-Type만 확인
@@ -923,6 +959,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     selectedWallet = await detectWallets(walletSelector);
     connectedWallets = await fetchAllWallets(walletSelector);
+
+    async function initialize() {
+      if (
+        !connectedWallets.includes("0x5ed159b0911a5cf7513b8924eb37088492442d5c")
+      ) {
+        console.log("no wallet");
+        loadUserData(); // Wallet이 없을 경우 loadUserData 호출
+      }
+    }
+
+    initialize();
 
     await calculateReputationScore(provider, connectedWallets);
 
