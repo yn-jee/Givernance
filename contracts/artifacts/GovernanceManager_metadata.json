@@ -96,11 +96,11 @@
 	},
 	"sources": {
 		"contracts/Fundraiser.sol": {
-			"keccak256": "0x76b4ec293c51d1f531de82d448df8e8190b822d80b78e12c26c3fed1a26a29e0",
+			"keccak256": "0xf84fdafae4fb32bb9eb76eff28ea94b903244c9040c773fdfb96ad1520075efa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://12728a1f1ebda2e3397f596da339867734d616a2d89d39ac7cd8ac8d06a604c6",
-				"dweb:/ipfs/QmZr5zDNJHnGKmHRPDDyrf1HFNFAbMT5roG14AVRfC3pka"
+				"bzz-raw://248ed6160912b0df5c1aba00a52e1453adad012654db49267f1075bb4cee910b",
+				"dweb:/ipfs/QmUZfsMWnHiA18UPzJJkM3CNUpYXg1Yj1zVRC4aFJarG2A"
 			]
 		},
 		"contracts/FundraiserFactory.sol": {
@@ -120,11 +120,11 @@
 			]
 		},
 		"contracts/GovernanceToken.sol": {
-			"keccak256": "0xeacf014dcda2b8f42eac159e8b5fc2fe31be809d24bd45499bf04d393e8261b7",
+			"keccak256": "0x9c514fdc51b9fd43f36f0d0287f48ebf10275c1de4a23bf2f474ead17dfb6ca0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f2170fd9724fb1b3c5c990ef4e1a753922b70c9e1ad867ce0b9da806257b6926",
-				"dweb:/ipfs/QmeZ8Jsr42jj76nrVj9qgnUXHaaViGvS6EDG6wVpmQhGGU"
+				"bzz-raw://b490efbdbe81243e93ce07b976d4fa9232d8b44e0bb50268e5d7343b435bb0c9",
+				"dweb:/ipfs/QmPrUM9XBtM67c2zKsDXwB56LDSvBjcaKs6KRgheD3cXS5"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/access/Ownable.sol": {

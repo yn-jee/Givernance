@@ -62,4 +62,8 @@ contract GovernanceToken is ERC721, Ownable {
         require(block.timestamp >= votingDeadline, "Voting is still ongoing, results are not available."); // 마감시간 체크
         return (totalVotesFor, totalVotesAgainst);
     }
+
+    function isDone() public view returns (bool) {
+        return block.timestamp >= votingDeadline;
+    }
 }

@@ -132,11 +132,11 @@
 	},
 	"sources": {
 		"contracts/Fundraiser.sol": {
-			"keccak256": "0x30cfc344464bb6c53816bd33bca3120cd3ecacb852c625dc3f14938455d0fab2",
+			"keccak256": "0xf84fdafae4fb32bb9eb76eff28ea94b903244c9040c773fdfb96ad1520075efa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7ca3249e7124b865f71bc3a3977707f147e96df4870842249888710db80b4194",
-				"dweb:/ipfs/QmRk7y6ggkoGCDdPizcEFogAKdfGB4CMd4XtsCgQgYkbiH"
+				"bzz-raw://248ed6160912b0df5c1aba00a52e1453adad012654db49267f1075bb4cee910b",
+				"dweb:/ipfs/QmUZfsMWnHiA18UPzJJkM3CNUpYXg1Yj1zVRC4aFJarG2A"
 			]
 		},
 		"contracts/FundraiserFactory.sol": {
