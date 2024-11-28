@@ -15,10 +15,6 @@ import {
 } from "./IPFSContractConfig.js";
 import { initializeProvider } from "./initializeProvider.js";
 
-import fs from "fs";
-import { uploadFiles } from "./upload.js";
-import { fetchData } from "./fetch.js";
-
 const animation = new LoadingAnimation("../images/loadingAnimation.json");
 await animation.loadAnimation();
 
@@ -340,15 +336,13 @@ async function fetchAndDisplayFundraiserDetails(
 
     console.log(infoData.hashes[0]);
     try {
-      // const response = await fetch(`/fetch/${infoData.hashes[0]}`, {
-      //   method: "GET", // GET 요청 사용
-      // });
+      const response = await fetch(`/fetch/${infoData.hashes[0]}`, {
+        method: "GET", // GET 요청 사용
+      });
 
-      // if (!response.ok) {
-      //   throw new Error("파일을 불러오는 데 실패했습니다.");
-      // }
-
-      const response = await fetchData(infoData.hashes[0]);
+      if (!response.ok) {
+        throw new Error("파일을 불러오는 데 실패했습니다.");
+      }
 
       const textData = await response.json();
       description = textData.data;
