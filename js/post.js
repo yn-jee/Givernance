@@ -21,6 +21,7 @@ await animation.loadAnimation();
 const urlParams = new URLSearchParams(window.location.search);
 const contractAddress = urlParams.get("contractAddress"); // 'contractAddress' 파라미터의 값 가져오기
 const IpfsGateway = "https://purple-careful-ladybug-259.mypinata.cloud/ipfs/";
+const backendUrl = "https://givernance.onrender.com";
 
 async function getEvents(provider, fundraiserFactoryAddress) {
   const fundraiserFactory = new ethers.Contract(
@@ -336,9 +337,12 @@ async function fetchAndDisplayFundraiserDetails(
 
     console.log(infoData.hashes[0]);
     try {
-      const response = await fetch(`/fetch/${infoData.hashes[0]}`, {
-        method: "GET", // GET 요청 사용
-      });
+      const response = await fetch(
+        `${backendUrl}/fetch/${infoData.hashes[0]}`,
+        {
+          method: "GET", // GET 요청 사용
+        }
+      );
 
       if (!response.ok) {
         throw new Error("파일을 불러오는 데 실패했습니다.");
