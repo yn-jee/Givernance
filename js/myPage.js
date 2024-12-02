@@ -960,16 +960,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     selectedWallet = await detectWallets(walletSelector);
     connectedWallets = await fetchAllWallets(walletSelector);
 
-    async function initialize() {
-      if (
-        !connectedWallets.includes("0x5ed159b0911a5cf7513b8924eb37088492442d5c")
-      ) {
-        console.log("no wallet");
-        loadUserData(); // Wallet이 없을 경우 loadUserData 호출
-      }
-    }
+    // async function initialize() {
+    //   if (
+    //     !connectedWallets.includes("0x5ed159b0911a5cf7513b8924eb37088492442d5c")
+    //   ) {
+    //     console.log("no wallet");
+    //     loadUserData(); // Wallet이 없을 경우 loadUserData 호출
+    //   }
+    // }
 
-    initialize();
+    // initialize();
 
     await calculateReputationScore(provider, connectedWallets);
 
