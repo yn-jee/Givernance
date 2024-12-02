@@ -337,22 +337,16 @@ async function fetchAndDisplayFundraiserDetails(
 
     console.log(infoData.hashes[0]);
     try {
-      const response = await fetch(
-        `${backendUrl}/fetch/${infoData.hashes[0]}`,
-        {
-          method: "GET", // GET 요청 사용
-        }
-      );
+      const response = await fetch(IpfsGateway + infoData.hashes[0], {
+        method: "GET", // GET 요청 사용
+      });
 
       if (!response.ok) {
         throw new Error("파일을 불러오는 데 실패했습니다.");
       }
 
-      const textData = await response.json();
-      description = textData.data;
+      description = await response.text();
       console.log("모금함 설명:", description);
-
-      // document.getElementById("textContainer").innerText = description; // 텍스트 데이터를 HTML 요소에 출력
     } catch (error) {
       console.error("Error fetching text:", error);
       alert("텍스트 데이터를 불러오는 중 오류가 발생했습니다.");
@@ -377,7 +371,7 @@ async function fetchAndDisplayFundraiserDetails(
 
       try {
         const response = await fetch(
-          `/fetch/${infoData.hashes[hashesLength - 1]}`,
+          IpfsGateway + infoData.hashes[hashesLength - 1],
           {
             method: "GET", // GET 요청 사용
           }
@@ -388,8 +382,9 @@ async function fetchAndDisplayFundraiserDetails(
         }
 
         const itemData = await response.json();
+        console.log(itemData);
 
-        itemData.data.forEach((item) => {
+        itemData.forEach((item) => {
           items.push({
             currency: item.currency,
             itemName: item.itemName,
