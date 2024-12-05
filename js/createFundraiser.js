@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         try {
-          const transactionResponse = await fundraiserFactory.createFundraiser(
+          /*const transactionResponse = await fundraiserFactory.createFundraiser(
             name,
             targetAmount,
             finishTimeUnix,
@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           console.log("contractAddress:", contractAddress);
           const createdFundraiserAddress =
             receipt.events[0].args.fundraiserAddress;
-          console.log("Fundraiser Address:", createdFundraiserAddress);
+          console.log("Fundraiser Address:", createdFundraiserAddress);*/
 
           // const response = await fetch("/upload", {
           //   method: "POST",
@@ -403,24 +403,62 @@ document.addEventListener("DOMContentLoaded", async function () {
           const IpfsHashes = [];
 
           try {
-            const formData = new FormData(); // FormData 객체 생성
+            const formData = new FormData();
             files.forEach((file) => {
-              formData.append("file", file); // 각 파일을 FormData에 추가
+              formData.append("file", file); // FormData에 파일 추가
             });
 
-            const response = await fetch("/upload", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${JWT}`, // JWT 토큰을 헤더에 포함
-              },
-              body: formData, // FormData를 서버로 전송
-            });
+            const response = await fetch(
+              "https://purple-careful-ladybug-259.mypinata.cloud/pinning/pinFileToIPFS",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${PINATA_API_KEY}:${PINATA_SECRET_API_KEY}`, // Pinata API 인증
+                },
+                body: formData,
+              }
+            );
 
-            const result = await response.json(); // 서버에서 JSON 형식으로 응답을 받음
-            result.forEach((data) => {
-              IpfsHashes.push(data);
-            });
+            if (!response.ok) {
+              throw new Error(
+                "Failed to upload to Pinata: " + response.statusText
+              );
+            }
+
+            const result = await response.json(); // Pinata의 응답 처리
+            if (Array.isArray(result)) {
+              result.forEach((data) => {
+                if (data.IpfsHash) {
+                  IpfsHashes.push(data.IpfsHash);
+                }
+              });
+            } else {
+              console.error("Unexpected response format from Pinata:", result);
+            }
+
             console.log(IpfsHashes);
+
+            //             엔드포인트 쓰는 기존 코드
+            // try {
+            //   const formData = new FormData(); // FormData 객체 생성
+            //   files.forEach((file) => {
+            //     formData.append("file", file); // 각 파일을 FormData에 추가
+            //   });
+
+            //   const response = await fetch("/upload", {
+            //     method: "POST",
+            //     headers: {
+            //       Authorization: `Bearer ${JWT}`, // JWT 토큰을 헤더에 포함
+            //     },
+            //     body: formData, // FormData를 서버로 전송
+            //   });
+
+            //   const result = await response.json(); // 서버에서 JSON 형식으로 응답을 받음
+            //   result.forEach((data) => {
+            //     IpfsHashes.push(data);
+            //   });
+            //   console.log(IpfsHashes);
+
             // if (Array.isArray(result)) {
             //   result.forEach((data) => {
             //     if (data.IpfsHash) {
@@ -450,28 +488,28 @@ document.addEventListener("DOMContentLoaded", async function () {
             alert("Error uploading file");
           }
 
-          const IpfsContract = new ethers.Contract(
-            fundraiserInfoContract,
-            IpfsContractABI,
-            signer
-          );
+          // const IpfsContract = new ethers.Contract(
+          //   fundraiserInfoContract,
+          //   IpfsContractABI,
+          //   signer
+          // );
 
-          const storeResponse = await storeData(
-            IpfsContract,
-            createdFundraiserAddress,
-            IpfsHashes
-          );
+          // const storeResponse = await storeData(
+          //   IpfsContract,
+          //   createdFundraiserAddress,
+          //   IpfsHashes
+          // );
 
-          console.log("Data stored in IPFS contract:", storeResponse);
+          // console.log("Data stored in IPFS contract:", storeResponse);
 
-          alert("Fundraiser has been registered successfully!");
+          // alert("Fundraiser has been registered successfully!");
 
-          window.location.href =
-            window.location.protocol +
-            "//" +
-            window.location.host +
-            "/post.html?contractAddress=" +
-            createdFundraiserAddress;
+          // window.location.href =
+          //   window.location.protocol +
+          //   "//" +
+          //   window.location.host +
+          //   "/post.html?contractAddress=" +
+          //   createdFundraiserAddress;
         } catch (error) {
           console.error("Failed to register fundraiser:", error);
           alert("모금함이 생성되지 않았습니다.", error);
