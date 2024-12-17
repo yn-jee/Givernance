@@ -12,7 +12,7 @@ export async function createGovernanceToken(
   minutesUntilDeadline
 ) {
   try {
-    const provider = new ethers.providers.Web3Provider(window.ethereum); // 메타마스크 같은 지갑에서 제공하는 프로바이더 설정
+    const provider = new ethers.providers.Web3Provider(window.ethereum); 
     const signer = provider.getSigner(); // 트랜잭션 서명자를 지갑에서 가져옴
 
     // GovernanceManager 컨트랙트 연결
