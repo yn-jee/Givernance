@@ -436,3 +436,28 @@ form {
 .finish-date {
   font-size: 90%;
 }
+
+#localDataInput {
+  width: 30%;
+  outline: none;
+  color: darkolivegreen;
+  font-size: 16px;
+  height: 25px;
+  background: rgb(220 248 255);
+  padding: 10px 20px 10px 20px;
+  border: 2px solid #41d7ff;
+  border-radius: 50px;
+  margin-bottom: 30px;
+}
+
+#setLocalData {
+  width: 15%;
+  margin: auto;
+  margin-bottom: 40px;
+  height: 40px;
+  background: beige;
+  color: darkolivegreen;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
