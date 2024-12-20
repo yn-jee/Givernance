@@ -144,11 +144,13 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(message) {
       console.log('Received from client: ' + message);
+     // 수신한 메시지를 문자열로 변환
+  const messageString = message.toString();
 
       // 다른 클라이언트에 메시지를 전송할 수 있습니다
       wss.clients.forEach(function each(client) {
-          if (client.readyState === WebSocketServer.OPEN) {
-              client.send(""+message);
+          if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(messageString);
           }
       });
   });
