@@ -4,14 +4,14 @@
     <title>Givernance</title>
     <link rel="stylesheet" type="text/css" href="css/style_dark.css">
     <meta charset="UTF-8">
-    <script src="./js/qrcodejs-master/qrcode.js"></script>
-    <script type="module" src="./js/login.js"></script>
+    <script src="js/qrcodejs-master/qrcode.js"></script>
+    <script type="module" src="js/login.js"></script>
 </head>
 <body>
     <div class="upperLinks">
         <a id="mainPageLink" href="index.html">&#x1F54A Givernance</a>
         <div class="logIn_signUp">
-            <a id="signUp" href="signup.html">Sign Up</a>
+            <a id="signUp" href="signUp.html">Sign Up</a>
         </div>    
     </div>
     <div class="qrcodeGeneration">
@@ -19,8 +19,8 @@
             <div id="qrcodeImage"></div>
         </div>
         <h3>Scan to Log In</h3>
-        <input type="text" id="localDataInput" placeholder="생성된 문자열을 입력해주세요">
-        <button id="setLocalData">Log In</button>
+        <input type="text" id="codeInput" placeholder="Enter generated string">
+        <button id="setLocalData" style="width: 40%; margin: auto;">Submit</button>
     </div>
 </body>
 </html>

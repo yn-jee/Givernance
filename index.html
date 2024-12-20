@@ -1,4 +1,4 @@
-<!DOCYTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Givernance</title>
@@ -13,14 +13,14 @@
   <div class="upperLinks">
       <a id="mainPageLink" href="index.html">&#x1F54A Givernance</a>
       <div class="logIn_signUp">
-          <!-- <a id="logIn" href="login.html">Log In</a>
-          <a id="signUp" href="signup.html">Sign Up</a> -->
-          <a id="logOut">Log Out</a>
-          <a id="myPage" href="myPage.html">My Page</a>
+        <a id="logIn" href="login.html">Log In</a>
+        <a id="signUp" href="signup.html">Sign Up</a>
+        <a id="logOut" href="#" class="hidden">Log Out</a>
+        <a id="myPage" href="myPage.html" class="hidden">My Page</a>
       </div>    
   </div>
   <div>
-      <img id="mainDove" src="images/mainDove.png" title="dove" href="createFundraiser_test.html">
+      <img id="mainDove" src="images/mainDove.png" title="dove">
       <p id="mainSlogan">START YOUR <b>GIVING</b><br>DO YOUR <b>GIVERNANCE</b></p>
   </div>
   <div class="mainContent">
@@ -53,14 +53,85 @@
       </label>
     </div>
     <div class="fundraiserContainer">
+        <!-- Fundraisers will be dynamically loaded here -->
     </div>
   </div>
-  <a id="creationTest" href="createFundraiser.html" style="color: darkolivegreen;">test</a>
+  <a id="creationTest" href="createFundraiser.html" style="color: darkolivegreen;">Create New Fundraiser</a>
   <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.5); align-items: center; justify-content: center; z-index: 1000;">
     <div id="loadingAnimation" style="width: 20%;"></div>
   </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
 <script src="https://unpkg.com/helia/dist/index.min.js"></script>
 <script type="module" src="./js/client.js"></script>
+<script type="module">
+  document.addEventListener("DOMContentLoaded", async () => {
+      const loginLink = document.getElementById('logIn');
+      const signupLink = document.getElementById('signUp');
+      const logoutLink = document.getElementById('logOut');
+      const mypageLink = document.getElementById('myPage');
+      const fundraiserContainer = document.querySelector(".fundraiserContainer");
+      const fundraiserStateRadios = document.getElementsByName("fundraiserState");
+
+      if (loginStatus === 'true') {
+          loginLink.style.display = 'none';
+          signupLink.style.display = 'none';
+          logoutLink.style.display = 'inline';
+          mypageLink.style.display = 'inline';
+      } else {
+          loginLink.style.display = 'inline';
+          signupLink.style.display = 'inline';
+          logoutLink.style.display = 'none';
+          mypageLink.style.display = 'none';
+      }
+
+      // Logout functionality
+      if (logOutLink) {
+          logOutLink.addEventListener("click", () => {
+              localStorage.clear();
+              alert("Logged out successfully!");
+              window.location.href = "index.html";
+          });
+      }
+
+      // Load fundraisers dynamically
+      async function loadFundraisers() {
+          fundraiserContainer.innerHTML = ""; // Clear existing fundraisers
+          const selectedState = Array.from(fundraiserStateRadios).find(radio => radio.checked)?.value || "fundraising";
+          const fakeData = [
+              { name: "Save the Forests", goal: "10 ETH", state: "fundraising" },
+              { name: "Support Education", goal: "5 ETH", state: "finished" }
+          ];
+
+          const filteredData = fakeData.filter(fundraiser => fundraiser.state === selectedState);
+
+          if (filteredData.length === 0) {
+              fundraiserContainer.innerHTML = "<p>No fundraisers available.</p>";
+          } else {
+              filteredData.forEach(fundraiser => {
+                  const item = document.createElement("div");
+                  item.classList.add("fundraiserItem");
+                  item.innerHTML = `
+                      <h3>${fundraiser.name}</h3>
+                      <p>Goal: ${fundraiser.goal}</p>
+                  `;
+                  fundraiserContainer.appendChild(item);
+              });
+          }
+      }
+
+      // Add event listeners for radio buttons
+      fundraiserStateRadios.forEach(radio => {
+          radio.addEventListener("change", loadFundraisers);
+      });
+
+      // Initial load
+      loadFundraisers();
+  });
+</script>
+<style>
+  .hidden {
+      display: none;
+  }
+</style>
 </body>
 </html>
